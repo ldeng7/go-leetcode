@@ -3,8 +3,8 @@ import "sort"
 func combinationSum2(candidates []int, target int) [][]int {
 	out := [][]int{}
 	sort.IntSlice(candidates).Sort()
-	var do func([]int, int, []int)
-	do = func(candidates []int, target int, reg []int) {
+	var cal func([]int, int, []int)
+	cal = func(candidates []int, target int, reg []int) {
 		sum := 0
 		for _, num := range reg {
 			sum += num
@@ -23,9 +23,9 @@ func combinationSum2(candidates []int, target int) [][]int {
 				continue
 			}
 			reg1 := append(reg, num)
-			do(candidates[i+1:], target, reg1)
+			cal(candidates[i+1:], target, reg1)
 		}
 	}
-	do(candidates, target, []int{})
+	cal(candidates, target, []int{})
 	return out
 }

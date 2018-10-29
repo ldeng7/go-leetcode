@@ -1,4 +1,4 @@
-func do(node *TreeNode, k int, m map[int]bool) bool {
+func cal(node *TreeNode, k int, m map[int]bool) bool {
 	if nil == node {
 		return false
 	}
@@ -6,10 +6,10 @@ func do(node *TreeNode, k int, m map[int]bool) bool {
 		return true
 	}
 	m[node.Val] = true
-	return do(node.Left, k, m) || do(node.Right, k, m)
+	return cal(node.Left, k, m) || cal(node.Right, k, m)
 }
 
 func findTarget(root *TreeNode, k int) bool {
 	m := map[int]bool{}
-	return do(root, k, m)
+	return cal(root, k, m)
 }

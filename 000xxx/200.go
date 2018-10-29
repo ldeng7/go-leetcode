@@ -1,4 +1,4 @@
-func do(grid [][]byte, x, y int) bool {
+func cal(grid [][]byte, x, y int) bool {
 	if x < 0 || y < 0 || x >= len(grid[0]) || y >= len(grid) {
 		return false
 	}
@@ -6,10 +6,10 @@ func do(grid [][]byte, x, y int) bool {
 		return false
 	}
 	grid[y][x] = '0'
-	do(grid, x-1, y)
-	do(grid, x, y-1)
-	do(grid, x+1, y)
-	do(grid, x, y+1)
+	cal(grid, x-1, y)
+	cal(grid, x, y-1)
+	cal(grid, x+1, y)
+	cal(grid, x, y+1)
 	return true
 }
 
@@ -20,7 +20,7 @@ func numIslands(grid [][]byte) int {
 	out := 0
 	for i := 0; i < len(grid); i++ {
 		for j := 0; j < len(grid[0]); j++ {
-			if do(grid, j, i) {
+			if cal(grid, j, i) {
 				out++
 			}
 		}

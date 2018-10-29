@@ -1,4 +1,4 @@
-func do(root *TreeNode, h *TreeNode) *TreeNode {
+func cal(root *TreeNode, h *TreeNode) *TreeNode {
 	if nil == root {
 		return h
 	}
@@ -6,9 +6,9 @@ func do(root *TreeNode, h *TreeNode) *TreeNode {
 	h.Right = root
 	h = h.Right
 	h.Left, h.Right = nil, nil
-	return do(right, do(left, h))
+	return cal(right, cal(left, h))
 }
 
 func flatten(root *TreeNode) {
-	do(root, &TreeNode{})
+	cal(root, &TreeNode{})
 }

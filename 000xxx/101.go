@@ -1,4 +1,4 @@
-func do(l, r *TreeNode) bool {
+func cal(l, r *TreeNode) bool {
 	if l == nil && r == nil {
 		return true
 	}
@@ -8,15 +8,15 @@ func do(l, r *TreeNode) bool {
 	if l.Val != r.Val {
 		return false
 	}
-	if !do(l.Left, r.Right) {
+	if !cal(l.Left, r.Right) {
 		return false
 	}
-	return do(l.Right, r.Left)
+	return cal(l.Right, r.Left)
 }
 
 func isSymmetric(root *TreeNode) bool {
 	if nil == root {
 		return true
 	}
-	return do(root.Left, root.Right)
+	return cal(root.Left, root.Right)
 }

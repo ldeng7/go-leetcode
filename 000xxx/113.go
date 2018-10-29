@@ -1,4 +1,4 @@
-func do(root *TreeNode, sum int, reg []int, out [][]int) [][]int {
+func cal(root *TreeNode, sum int, reg []int, out [][]int) [][]int {
 	if nil == root {
 		return out
 	}
@@ -11,11 +11,11 @@ func do(root *TreeNode, sum int, reg []int, out [][]int) [][]int {
 		}
 		return out
 	}
-	out = do(root.Left, sum-root.Val, reg, out)
-	return do(root.Right, sum-root.Val, reg, out)
+	out = cal(root.Left, sum-root.Val, reg, out)
+	return cal(root.Right, sum-root.Val, reg, out)
 }
 
 func pathSum(root *TreeNode, sum int) [][]int {
 	out := [][]int{}
-	return do(root, sum, []int{}, out)
+	return cal(root, sum, []int{}, out)
 }
