@@ -11,7 +11,7 @@ func myAtoi(str string) int {
 		} else if c == '+' || c == '-' {
 			if !started {
 				started = true
-				m = c == '-'
+				m = (c == '-')
 				continue
 			}
 			break
