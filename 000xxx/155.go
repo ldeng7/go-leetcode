@@ -1,50 +1,105 @@
+type ListNode struct {
+	Val  int
+	Prev *ListNode
+	Next *ListNode
+}
+
+type List struct {
+	Head *ListNode
+	Tail *ListNode
+}
+
+func (l *List) PushBack(n *ListNode) {
+	n.Next = nil
+	if l.Tail != nil {
+		l.Tail.Next = n
+	} else {
+		l.Head = n
+	}
+	n.Prev = l.Tail
+	l.Tail = n
+}
+
+func (l *List) PopBack() *ListNode {
+	if l.Tail == nil {
+		return nil
+	}
+	r := l.Tail
+	if r.Prev != nil {
+		l.Tail = r.Prev
+	} else {
+		l.Head, l.Tail = nil, nil
+	}
+	return r
+}
+
+type Stack interface {
+	Empty() bool
+	Top() (int, bool)
+	Push(item int)
+	Pop() (int, bool)
+}
+
+type ListStack struct {
+	l *List
+}
+
+func NewListStack() Stack {
+	return &ListStack{&List{}}
+}
+
+func (s *ListStack) Empty() bool {
+	return nil == s.l.Head
+}
+
+func (s *ListStack) Top() (int, bool) {
+	if nil != s.l.Tail {
+		return s.l.Tail.Val, true
+	}
+	return 0, false
+}
+
+func (s *ListStack) Push(item int) {
+	s.l.PushBack(&ListNode{Val: item})
+}
+
+func (s *ListStack) Pop() (int, bool) {
+	tail := s.l.PopBack()
+	if nil != tail {
+		return tail.Val, true
+	}
+	return 0, false
+}
+
 type MinStack struct {
-	buf []int
-	min int
+	s, sm Stack
 }
 
 func Constructor() MinStack {
-	s := MinStack{
-		buf: []int{},
-	}
-	return s
+	return MinStack{NewListStack(), NewListStack()}
 }
 
 func (this *MinStack) Push(x int) {
-	this.buf = append(this.buf, x)
-	if 1 == len(this.buf) || x < this.min {
-		this.min = x
+	this.s.Push(x)
+	if t, ok := this.sm.Top(); !ok || t >= x {
+		this.sm.Push(x)
 	}
 }
 
 func (this *MinStack) Pop() {
-	if 0 == len(this.buf) {
-		return
-	}
-	top := this.buf[len(this.buf)-1]
-	this.buf = this.buf[:len(this.buf)-1]
-	if this.min == top {
-		if 0 == len(this.buf) {
-			this.min = 0
-		} else {
-			this.min = this.buf[0]
-			for i := 1; i < len(this.buf); i++ {
-				if this.buf[i] < this.min {
-					this.min = this.buf[i]
-				}
-			}
+	if t, ok := this.s.Pop(); ok {
+		if tm, _ := this.sm.Top(); tm == t {
+			this.sm.Pop()
 		}
 	}
-
 }
 
 func (this *MinStack) Top() int {
-	if 0 == len(this.buf) {
-		return 0
-	}
-	return this.buf[len(this.buf)-1]
+	t, _ := this.s.Top()
+	return t
 }
 
 func (this *MinStack) GetMin() int {
-	return this.min
+	t, _ := this.sm.Top()
+	return t
 }

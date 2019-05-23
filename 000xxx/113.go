@@ -1,21 +1,22 @@
-func cal(root *TreeNode, sum int, reg []int, out [][]int) [][]int {
-	if nil == root {
-		return out
-	}
-	reg = append(reg, root.Val)
-	if nil == root.Left && nil == root.Right {
-		if root.Val == sum {
-			regNew := make([]int, len(reg))
-			copy(regNew, reg)
-			out = append(out, regNew)
-		}
-		return out
-	}
-	out = cal(root.Left, sum-root.Val, reg, out)
-	return cal(root.Right, sum-root.Val, reg, out)
-}
-
 func pathSum(root *TreeNode, sum int) [][]int {
 	out := [][]int{}
-	return cal(root, sum, []int{}, out)
+	var cal func(*TreeNode, int, []int)
+	cal = func(n *TreeNode, sum int, reg []int) {
+		if nil == n {
+			return
+		}
+		reg1 := make([]int, len(reg)+1)
+		copy(reg1, reg)
+		reg1[len(reg1)-1] = n.Val
+		if nil == n.Left && nil == n.Right {
+			if n.Val == sum {
+				out = append(out, reg1)
+			}
+			return
+		}
+		cal(n.Left, sum-n.Val, reg1)
+		cal(n.Right, sum-n.Val, reg1)
+	}
+	cal(root, sum, []int{})
+	return out
 }

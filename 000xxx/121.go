@@ -1,11 +1,14 @@
 func maxProfit(prices []int) int {
-	out, t := 0, -1
+	if 0 == len(prices) {
+		return 0
+	}
+	b, out := prices[0], 0
 	for _, p := range prices {
-		if -1 == t || p < t {
-			t = p
+		if p < b {
+			b = p
 		}
-		if p-t > out {
-			out = p - t
+		if p-b > out {
+			out = p - b
 		}
 	}
 	return out

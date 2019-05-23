@@ -10,9 +10,8 @@ func minDepth(root *TreeNode) int {
 	if dr == 0 {
 		return 1 + dl
 	}
-	d := dl
 	if dr < dl {
-		d = dr
+		dl = dr
 	}
-	return 1 + d
+	return dl + 1
 }

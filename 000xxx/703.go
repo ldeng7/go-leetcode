@@ -1,40 +1,50 @@
 import "sort"
 
+type SortedArray []int
+
+func (sa SortedArray) LowerBound(bound int) int {
+	return sort.Search(len(sa), func(j int) bool {
+		return sa[j] >= bound
+	})
+}
+
+func (sa SortedArray) Add(item int) SortedArray {
+	i := sa.LowerBound(item)
+	if i != len(sa) {
+		sa = append(sa, 0)
+		copy(sa[i+1:], sa[i:])
+		sa[i] = item
+	} else {
+		sa = append(sa, item)
+	}
+	return sa
+}
+
 type KthLargest struct {
-	k    int
-	heap []int
-	l    int
+	k  int
+	sa SortedArray
 }
 
 func Constructor(k int, nums []int) KthLargest {
-	obj := KthLargest{k, make([]int, k), 0}
-	sort.IntSlice(nums).Sort()
+	sort.Ints(nums)
 	i := len(nums) - k
 	if i < 0 {
 		i = 0
 	}
-	copy(obj.heap, nums[i:])
-	obj.l = len(nums) - i
-	return obj
+	l := len(nums) - i
+	sa := make([]int, l)
+	copy(sa, nums[i:])
+	return KthLargest{k, sa}
 }
 
 func (this *KthLargest) Add(val int) int {
-	i := sort.Search(this.l, func(i int) bool {
-		return this.heap[i] >= val
-	})
-	if this.l < this.k {
-		if i < this.l {
-			copy(this.heap[i+1:], this.heap[i:this.l])
+	if len(this.sa) == this.k {
+		x := this.sa[0]
+		if val <= x {
+			return x
 		}
-		this.heap[i] = val
-		this.l++
-	} else {
-		if i == 1 {
-			this.heap[0] = val
-		} else if i > 1 {
-			copy(this.heap, this.heap[1:i])
-			this.heap[i-1] = val
-		}
+		this.sa = this.sa[1:]
 	}
-	return this.heap[0]
+	this.sa = this.sa.Add(val)
+	return this.sa[0]
 }

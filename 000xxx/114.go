@@ -1,14 +1,20 @@
-func cal(root *TreeNode, h *TreeNode) *TreeNode {
-	if nil == root {
-		return h
+func cal(n *TreeNode) *TreeNode {
+	r := n.Right
+	n.Right, n.Left = n.Left, nil
+	t := n
+	if nil != n.Right {
+		t = cal(n.Right)
 	}
-	left, right := root.Left, root.Right
-	h.Right = root
-	h = h.Right
-	h.Left, h.Right = nil, nil
-	return cal(right, cal(left, h))
+	t.Right = r
+	if nil != r {
+		t = cal(r)
+	}
+	return t
 }
 
 func flatten(root *TreeNode) {
-	cal(root, &TreeNode{})
+	if root == nil {
+		return
+	}
+	cal(root)
 }
