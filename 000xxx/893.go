@@ -37,4 +37,3 @@ func numSpecialEquivGroups(A []string) int {
 	}
 	return cnt
 }
-

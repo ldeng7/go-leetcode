@@ -29,4 +29,3 @@ func totalNQueens(n int) int {
 	cal(0)
 	return out
 }
-

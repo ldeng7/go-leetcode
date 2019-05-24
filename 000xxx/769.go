@@ -1,9 +1,9 @@
 func maxChunksToSorted(arr []int) int {
 	out := 0
 	j := 0
-	for i := 0; i < len(arr); i++ {
-		if arr[i] > j {
-			j = arr[i]
+	for i, a := range arr {
+		if a > j {
+			j = a
 		}
 		if i == j {
 			out++

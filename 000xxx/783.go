@@ -17,4 +17,3 @@ func minDiffInBST(root *TreeNode) int {
 	cal(root, &pre, &out)
 	return out
 }
-
