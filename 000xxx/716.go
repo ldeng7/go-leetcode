@@ -34,6 +34,7 @@ func (l *List) PopBack() *ListNode {
 }
 
 type Stack interface {
+	Empty() bool
 	Top() (int, bool)
 	Push(item int)
 	Pop() (int, bool)
@@ -45,6 +46,10 @@ type ListStack struct {
 
 func NewListStack() Stack {
 	return &ListStack{&List{}}
+}
+
+func (s *ListStack) Empty() bool {
+	return nil == s.l.head
 }
 
 func (s *ListStack) Top() (int, bool) {
@@ -66,35 +71,62 @@ func (s *ListStack) Pop() (int, bool) {
 	return 0, false
 }
 
-type MinStack struct {
+type MaxStack struct {
 	s, sm Stack
 }
 
-func Constructor() MinStack {
-	return MinStack{NewListStack(), NewListStack()}
+func Constructor() MaxStack {
+	return MaxStack{NewListStack(), NewListStack()}
 }
 
-func (this *MinStack) Push(x int) {
+func (this *MaxStack) Push(x int) {
 	this.s.Push(x)
-	if t, ok := this.sm.Top(); !ok || t >= x {
+	if t, ok := this.sm.Top(); !ok || t <= x {
 		this.sm.Push(x)
 	}
 }
 
-func (this *MinStack) Pop() {
-	if t, ok := this.s.Pop(); ok {
+func (this *MaxStack) Pop() int {
+	t, ok := this.s.Pop()
+	if ok {
 		if tm, _ := this.sm.Top(); tm == t {
 			this.sm.Pop()
 		}
 	}
+	return t
 }
 
-func (this *MinStack) Top() int {
+func (this *MaxStack) Top() int {
 	t, _ := this.s.Top()
 	return t
 }
 
-func (this *MinStack) GetMin() int {
+func (this *MaxStack) PeekMax() int {
 	t, _ := this.sm.Top()
+	return t
+}
+
+func (this *MaxStack) PopMax() int {
+	t, ok := this.sm.Top()
+	if !ok {
+		return 0
+	}
+	st := NewListStack()
+	for {
+		t, _ := this.s.Top()
+		tm, _ := this.sm.Top()
+		if t == tm {
+			break
+		}
+		st.Push(t)
+		this.s.Pop()
+	}
+	this.s.Pop()
+	this.sm.Pop()
+	for !st.Empty() {
+		t, _ := st.Top()
+		this.Push(t)
+		st.Pop()
+	}
 	return t
 }
