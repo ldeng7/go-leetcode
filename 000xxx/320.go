@@ -1,18 +1,23 @@
-import "fmt"
+import "strconv"
 
 func generateAbbreviations(word string) []string {
-	if 0 == len(word) {
-		return []string{""}
-	}
-	out := []string{fmt.Sprintf("%d", len(word))}
-	for i := 0; i < len(word); i++ {
-		for _, abbr := range generateAbbreviations(word[i+1:]) {
-			if i > 0 {
-				out = append(out, fmt.Sprintf("%d%c%s", i, word[i], abbr))
-			} else {
-				out = append(out, fmt.Sprintf("%c%s", word[i], abbr))
+	out := []string{}
+	var cal func(string, int, int)
+	cal = func(s string, i, c int) {
+		if i != len(word) {
+			cal(s, i+1, c+1)
+			if c > 0 {
+				s += strconv.Itoa(c)
 			}
+			s += word[i : i+1]
+			cal(s, i+1, 0)
+		} else {
+			if c > 0 {
+				s += strconv.Itoa(c)
+			}
+			out = append(out, s)
 		}
 	}
+	cal("", 0, 0)
 	return out
 }
