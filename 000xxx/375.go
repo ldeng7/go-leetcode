@@ -1,14 +1,14 @@
 import "math"
 
 func min(a, b int) int {
-	if a < b {
+	if a <= b {
 		return a
 	}
 	return b
 }
 
 func max(a, b int) int {
-	if a < b {
+	if a <= b {
 		return b
 	}
 	return a

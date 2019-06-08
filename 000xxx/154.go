@@ -1,5 +1,5 @@
 func min(a, b int) int {
-	if a < b {
+	if a <= b {
 		return a
 	}
 	return b
@@ -11,7 +11,7 @@ func findMin(nums []int) int {
 	}
 	o, l, r := nums[0], 0, len(nums)-1
 	for l < r-1 {
-		m := l + (r-l)/2
+		m := l + (r-l)>>1
 		if nums[l] < nums[m] {
 			o, l = min(o, nums[l]), m+1
 		} else if nums[l] > nums[m] {

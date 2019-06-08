@@ -5,7 +5,7 @@ func searchRange(nums []int, target int) []int {
 
 	i, j := 0, len(nums)
 	for i < j {
-		h := int((uint(i) + uint(j)) >> 1)
+		h := i + (j-i)>>1
 		if nums[h] >= target {
 			j = h
 		} else {
@@ -19,7 +19,7 @@ func searchRange(nums []int, target int) []int {
 
 	j = len(nums)
 	for i < j {
-		h := int((uint(i) + uint(j)) >> 1)
+		h := i + (j-i)>>1
 		if nums[h] > target {
 			j = h
 		} else {

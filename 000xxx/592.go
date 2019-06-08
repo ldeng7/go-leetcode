@@ -1,6 +1,8 @@
-import "regexp"
-import "strconv"
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+	"strconv"
+)
 
 func gcd(a, b int) int {
 	if 0 == b {

@@ -1,15 +1,15 @@
 type NumArray struct {
-	ar []int
+	t []int
 }
 
 func Constructor(nums []int) NumArray {
-	return NumArray{nums}
+	t := make([]int, len(nums)+1)
+	for i := 1; i <= len(nums); i++ {
+		t[i] = t[i-1] + nums[i-1]
+	}
+	return NumArray{t}
 }
 
 func (this *NumArray) SumRange(i int, j int) int {
-	sum := 0
-	for _, n := range this.ar[i : j+1] {
-		sum += n
-	}
-	return sum
+	return this.t[j+1] - this.t[i]
 }

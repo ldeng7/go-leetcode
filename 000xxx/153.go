@@ -7,7 +7,7 @@ func findMin(nums []int) int {
 		if j == i+1 {
 			return nums[j]
 		}
-		h := int((uint(i) + uint(j)) >> 1)
+		h := i + (j-i)>>1
 		if nums[h] < nums[j] {
 			j = h
 		} else {

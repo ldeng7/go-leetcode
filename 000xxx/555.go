@@ -1,5 +1,5 @@
 func max(a, b string) string {
-	if a < b {
+	if a <= b {
 		return b
 	}
 	return a

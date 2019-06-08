@@ -1,7 +1,7 @@
 func search(nums []int, target int) int {
 	i, j := 0, len(nums)-1
 	for i <= j {
-		h := int((uint(i) + uint(j)) >> 1)
+		h := i + (j-i)>>1
 		if nums[h] == target {
 			return h
 		}

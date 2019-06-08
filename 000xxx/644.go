@@ -11,7 +11,7 @@ func findMaxAverage(nums []int, k int) float64 {
 		}
 	}
 	for r-l > 1e-5 {
-		var min, m float64 = 0.0, l + (r-l)/2
+		var min, m float64 = 0.0, l + (r-l)>>1
 		b := false
 		for i := 1; i <= len(nums); i++ {
 			sums[i] = sums[i-1] + float64(nums[i-1]) - m

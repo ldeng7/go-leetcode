@@ -3,7 +3,7 @@ import "math"
 func search(reader ArrayReader, target int) int {
 	l, r := 0, math.MaxInt64
 	for l < r {
-		m := l + (r-l)/2
+		m := l + (r-l)>>1
 		i := reader.get(m)
 		if i == target {
 			return m

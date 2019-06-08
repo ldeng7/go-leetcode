@@ -1,15 +1,15 @@
 func search(nums []int, target int) int {
-	i, j := 0, len(nums)-1
-	for i < j {
-		m := int((uint(i) + uint(j)) >> 1)
+	l, r := 0, len(nums)-1
+	for l < r {
+		m := l + (r-l)>>1
 		if nums[m] >= target {
-			j = m
+			r = m
 		} else {
-			i = m + 1
+			l = m + 1
 		}
 	}
-	if nums[i] != target {
+	if nums[l] != target {
 		return -1
 	}
-	return i
+	return l
 }
