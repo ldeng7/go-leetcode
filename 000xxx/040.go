@@ -2,7 +2,7 @@ import "sort"
 
 func combinationSum2(candidates []int, target int) [][]int {
 	out := [][]int{}
-	sort.IntSlice(candidates).Sort()
+	sort.Ints(candidates)
 	var cal func([]int, int, []int)
 	cal = func(candidates []int, target int, reg []int) {
 		sum := 0

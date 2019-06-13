@@ -9,7 +9,7 @@ func reorganizeString(s string) string {
 	for i := 0; i < 26; i++ {
 		cnt[i] += i
 	}
-	sort.IntSlice(cnt).Sort()
+	sort.Ints(cnt)
 	j := 1
 	for _, c := range cnt {
 		k := c / 100

@@ -1,22 +1,37 @@
-func validTree(n int, edges [][]int) bool {
-	roots := make([]int, n)
-	var cal func(i int) int
-	cal = func(i int) int {
-		for -1 != roots[i] {
-			i = roots[i]
-		}
-		return i
-	}
+type ArrayUnion struct {
+	arr []int
+}
 
-	for i := 0; i < n; i++ {
-		roots[i] = -1
+func (au *ArrayUnion) Init(l int) *ArrayUnion {
+	au.arr = make([]int, l)
+	for i := 0; i < l; i++ {
+		au.arr[i] = -1
 	}
+	return au
+}
+
+func (au *ArrayUnion) Set(i, v int) {
+	au.arr[i] = v
+}
+
+func (au *ArrayUnion) GetRoot(i int) int {
+	for {
+		r := au.arr[i]
+		if r == i || r == -1 {
+			return i
+		}
+		i = r
+	}
+}
+
+func validTree(n int, edges [][]int) bool {
+	au := (&ArrayUnion{}).Init(n)
 	for _, e := range edges {
-		a, b := cal(e[0]), cal(e[1])
-		if a == b {
+		r1, r2 := au.GetRoot(e[0]), au.GetRoot(e[1])
+		if r1 == r2 {
 			return false
 		}
-		roots[a] = b
+		au.Set(r1, r2)
 	}
 	return len(edges) == n-1
 }

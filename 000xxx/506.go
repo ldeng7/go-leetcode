@@ -8,7 +8,7 @@ func findRelativeRanks(nums []int) []string {
 	for i, n := range nums {
 		m[n] = i
 	}
-	sort.IntSlice(nums).Sort()
+	sort.Ints(nums)
 	for i := len(nums) - 1; i >= 0; i-- {
 		j := m[nums[i]]
 		if cnt == 1 {

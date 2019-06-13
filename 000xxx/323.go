@@ -1,20 +1,37 @@
+type ArrayUnion struct {
+	arr []int
+}
+
+func (au *ArrayUnion) Init(l int) *ArrayUnion {
+	au.arr = make([]int, l)
+	for i := 0; i < l; i++ {
+		au.arr[i] = -1
+	}
+	return au
+}
+
+func (au *ArrayUnion) Set(i, v int) {
+	au.arr[i] = v
+}
+
+func (au *ArrayUnion) GetRoot(i int) int {
+	for {
+		r := au.arr[i]
+		if r == i || r == -1 {
+			return i
+		}
+		i = r
+	}
+}
+
 func countComponents(n int, edges [][]int) int {
 	out := n
-	roots := make([]int, n)
-	for i := 0; i < n; i++ {
-		roots[i] = i
-	}
-	getRoot := func(i int) int {
-		for roots[i] != i {
-			i = roots[i]
-		}
-		return i
-	}
+	au := (&ArrayUnion{}).Init(n)
 	for _, e := range edges {
-		i1, i2 := getRoot(e[0]), getRoot(e[1])
-		if i1 != i2 {
+		r1, r2 := au.GetRoot(e[0]), au.GetRoot(e[1])
+		if r1 != r2 {
+			au.Set(r2, r1)
 			out--
-			roots[i2] = i1
 		}
 	}
 	return out

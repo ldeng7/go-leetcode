@@ -9,7 +9,7 @@ func shortestCompletingWord(licensePlate string, words []string) string {
 	for i, _ := range m {
 		ls = append(ls, i)
 	}
-	sort.IntSlice(ls).Sort()
+	sort.Ints(ls)
 	bs := []byte{}
 	for _, b := range []byte(licensePlate) {
 		if b >= 'a' && b <= 'z' {

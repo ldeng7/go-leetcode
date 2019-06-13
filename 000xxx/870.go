@@ -1,17 +1,14 @@
 import "sort"
 
 type PriorityQueue struct {
-	Arr [][2]int
-}
-
-func less(a, b [2]int) bool {
-	return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1])
+	Arr    [][2]int
+	lessCb func(a, b [2]int) bool
 }
 
 func (pq *PriorityQueue) up(j int) {
 	for {
 		i := (j - 1) / 2
-		if i == j || !less(pq.Arr[j], pq.Arr[i]) {
+		if i == j || !pq.lessCb(pq.Arr[j], pq.Arr[i]) {
 			break
 		}
 		pq.Arr[i], pq.Arr[j] = pq.Arr[j], pq.Arr[i]
@@ -27,10 +24,10 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 			break
 		}
 		j := j1
-		if j2 := j1 + 1; j2 < n && less(pq.Arr[j2], pq.Arr[j1]) {
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.Arr[j2], pq.Arr[j1]) {
 			j = j2
 		}
-		if !less(pq.Arr[j], pq.Arr[i]) {
+		if !pq.lessCb(pq.Arr[j], pq.Arr[i]) {
 			break
 		}
 		pq.Arr[i], pq.Arr[j] = pq.Arr[j], pq.Arr[i]
@@ -39,8 +36,9 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr [][2]int) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr [][2]int, lessCb func([2]int, [2]int) bool) *PriorityQueue {
 	pq.Arr = arr
+	pq.lessCb = lessCb
 	l := len(pq.Arr)
 	for i := l>>1 - 1; i >= 0; i-- {
 		pq.down(i, l)
@@ -70,7 +68,9 @@ func advantageCount(A []int, B []int) []int {
 	l, r := 0, n-1
 	sort.Ints(A)
 	out := make([]int, n)
-	q := (&PriorityQueue{}).Init(nil)
+	q := (&PriorityQueue{}).Init(nil, func(a, b [2]int) bool {
+		return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1])
+	})
 	for i, b := range B {
 		q.Push([2]int{b, i})
 	}

@@ -1,29 +1,37 @@
 import "sort"
 
 type OrderedArray struct {
-	Arr []int
-}
-
-func less(a, b int) bool {
-	return a < b
+	Arr    []int
+	lessCb func(a, b int) bool
 }
 
 func (oa *OrderedArray) Len() int           { return len(oa.Arr) }
-func (oa *OrderedArray) Less(i, j int) bool { return less(oa.Arr[i], oa.Arr[j]) }
+func (oa *OrderedArray) Less(i, j int) bool { return oa.lessCb(oa.Arr[i], oa.Arr[j]) }
 func (oa *OrderedArray) Swap(i, j int)      { oa.Arr[i], oa.Arr[j] = oa.Arr[j], oa.Arr[i] }
 
-func (oa *OrderedArray) Init(arr []int) *OrderedArray {
+func (oa *OrderedArray) Init(arr []int, lessCb func(int, int) bool) *OrderedArray {
 	oa.Arr = arr
 	if len(arr) > 1 {
 		sort.Sort(oa)
+	}
+	oa.lessCb = lessCb
+	if nil == lessCb {
+		oa.lessCb = func(a, b int) bool { return a < b }
 	}
 	return oa
 }
 
 func (oa *OrderedArray) binSearch(item int) int {
-	return sort.Search(len(oa.Arr), func(index int) bool {
-		return !less(oa.Arr[index], item)
-	})
+	i, j := 0, len(oa.Arr)
+	for i < j {
+		h := int(uint(i+j) >> 1)
+		if oa.lessCb(oa.Arr[h], item) {
+			i = h + 1
+		} else {
+			j = h
+		}
+	}
+	return i
 }
 
 func (oa *OrderedArray) Add(item int) {
@@ -42,9 +50,9 @@ type OrderedMap struct {
 	oa OrderedArray
 }
 
-func (om *OrderedMap) Init() *OrderedMap {
+func (om *OrderedMap) Init(lessCb func(int, int) bool) *OrderedMap {
 	om.m = map[int]float64{}
-	om.oa.Init(nil)
+	om.oa.Init(nil, lessCb)
 	return om
 }
 
@@ -69,7 +77,7 @@ func (om *OrderedMap) Set(k int, v float64) {
 func carFleet(target int, position []int, speed []int) int {
 	o := 0
 	var t0 float64
-	m := (&OrderedMap{}).Init()
+	m := (&OrderedMap{}).Init(nil)
 	for i, p := range position {
 		m.Set(-p, float64(target-p)/float64(speed[i]))
 	}

@@ -1,15 +1,12 @@
 type PriorityQueue struct {
-	Arr []int
-}
-
-func less(a, b int) bool {
-	return a > b
+	Arr    []int
+	lessCb func(a, b int) bool
 }
 
 func (pq *PriorityQueue) up(j int) {
 	for {
 		i := (j - 1) / 2
-		if i == j || !less(pq.Arr[j], pq.Arr[i]) {
+		if i == j || !pq.lessCb(pq.Arr[j], pq.Arr[i]) {
 			break
 		}
 		pq.Arr[i], pq.Arr[j] = pq.Arr[j], pq.Arr[i]
@@ -25,10 +22,10 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 			break
 		}
 		j := j1
-		if j2 := j1 + 1; j2 < n && less(pq.Arr[j2], pq.Arr[j1]) {
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.Arr[j2], pq.Arr[j1]) {
 			j = j2
 		}
-		if !less(pq.Arr[j], pq.Arr[i]) {
+		if !pq.lessCb(pq.Arr[j], pq.Arr[i]) {
 			break
 		}
 		pq.Arr[i], pq.Arr[j] = pq.Arr[j], pq.Arr[i]
@@ -37,8 +34,9 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
 	pq.Arr = arr
+	pq.lessCb = lessCb
 	l := len(pq.Arr)
 	for i := l>>1 - 1; i >= 0; i-- {
 		pq.down(i, l)
@@ -68,7 +66,7 @@ func minRefuelStops(target int, startFuel int, stations [][]int) int {
 		return 0
 	}
 	f, out := startFuel, 0
-	q := (&PriorityQueue{}).Init(nil)
+	q := (&PriorityQueue{}).Init(nil, func(a, b int) bool { return a > b })
 	for _, s := range stations {
 		for f < s[0] {
 			if 0 == len(q.Arr) {

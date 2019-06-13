@@ -1,7 +1,7 @@
 import "sort"
 
 func threeSumClosest(nums []int, target int) int {
-	sort.IntSlice(nums).Sort()
+	sort.Ints(nums)
 	var diff *int
 	out := 0
 

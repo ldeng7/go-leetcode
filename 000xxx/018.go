@@ -1,7 +1,7 @@
 import "sort"
 
 func fourSum(nums []int, target int) [][]int {
-	sort.IntSlice(nums).Sort()
+	sort.Ints(nums)
 	out := [][]int{}
 	for i := 0; i < len(nums)-3; i++ {
 		for j := i + 1; j < len(nums)-2; j++ {

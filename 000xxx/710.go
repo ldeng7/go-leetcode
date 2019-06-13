@@ -8,7 +8,7 @@ type Solution struct {
 }
 
 func Constructor(n int, bl []int) Solution {
-	sort.IntSlice(bl).Sort()
+	sort.Ints(bl)
 	anc, pb := 0, -1
 	s := Solution{n - len(bl), map[int]int{anc: 0}, []int{anc}}
 	for i, b := range bl {

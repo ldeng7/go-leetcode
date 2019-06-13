@@ -1,7 +1,7 @@
 import "sort"
 
 func threeSum(nums []int) [][]int {
-	sort.IntSlice(nums).Sort()
+	sort.Ints(nums)
 	out := [][]int{}
 
 	for i := 0; i < len(nums)-2; i++ {

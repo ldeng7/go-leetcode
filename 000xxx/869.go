@@ -3,12 +3,6 @@ import (
 	"strconv"
 )
 
-type Bytes []byte
-
-func (bs Bytes) Len() int           { return len(bs) }
-func (bs Bytes) Less(i, j int) bool { return bs[i] < bs[j] }
-func (bs Bytes) Swap(i, j int)      { bs[i], bs[j] = bs[j], bs[i] }
-
 var m map[string]bool = map[string]bool{
 	"1": true, "2": true, "4": true, "8": true, "16": true, "23": true, "46": true, "128": true, "256": true,
 	"125": true, "0124": true, "0248": true, "0469": true, "1289": true, "13468": true, "23678": true, "35566": true,
@@ -17,7 +11,9 @@ var m map[string]bool = map[string]bool{
 }
 
 func reorderedPowerOf2(N int) bool {
-	bs := Bytes(strconv.Itoa(N))
-	sort.Sort(bs)
+	bs := []byte(strconv.Itoa(N))
+	sort.Slice(bs, func(i, j int) bool {
+		return bs[i] < bs[j]
+	})
 	return m[string(bs)]
 }
