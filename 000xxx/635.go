@@ -12,7 +12,7 @@ func (this *LogSystem) Put(id int, timestamp string) {
 	this.ts = append(this.ts, timestamp)
 }
 
-var m map[string]int = map[string]int{
+var m = map[string]int{
 	"Year": 4, "Month": 7, "Day": 10, "Hour": 13, "Minute": 16, "Second": 19,
 }
 

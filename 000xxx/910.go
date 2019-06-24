@@ -14,7 +14,6 @@ func smallestRangeII(A []int, K int) int {
 		}
 	}
 	d := max - min
-	println(d, K)
 	if d >= K<<2 {
 		return d - K<<1
 	} else if d <= K {

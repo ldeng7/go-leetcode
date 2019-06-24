@@ -1,4 +1,4 @@
-var m map[int]bool = map[int]bool{
+var m = map[int]bool{
 	1:                   true,
 	3:                   true,
 	9:                   true,

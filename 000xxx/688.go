@@ -1,6 +1,6 @@
 import "math"
 
-var dirs [8][2]int = [8][2]int{{-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}, {2, -1}, {1, -2}}
+var dirs = [8][2]int{{-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}, {2, -1}, {1, -2}}
 
 func knightProbability(N int, K int, r int, c int) float64 {
 	if K == 0 {

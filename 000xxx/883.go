@@ -1,31 +1,22 @@
+func max(a, b int) int {
+	if a <= b {
+		return b
+	}
+	return a
+}
+
 func projectionArea(grid [][]int) int {
-	if 0 == len(grid) || 0 == len(grid[0]) {
-		return 0
-	}
-	sum := 0
-	m, n := len(grid), len(grid[0])
-	for i := 0; i < m; i++ {
-		h := 0
-		for j := 0; j < n; j++ {
-			x := grid[i][j]
-			if x != 0 {
-				sum++ // z-axis
+	o, l := 0, len(grid)
+	for i := 0; i < l; i++ {
+		r, c := 0, 0
+		for j := 0; j < l; j++ {
+			if grid[i][j] > 0 {
+				o++
 			}
-			if x > h {
-				h = x
-			}
+			r = max(r, grid[i][j])
+			c = max(c, grid[j][i])
 		}
-		sum += h // x-axis
+		o += r + c
 	}
-	for j := 0; j < n; j++ {
-		h := 0
-		for i := 0; i < m; i++ {
-			x := grid[i][j]
-			if x > h {
-				h = x
-			}
-		}
-		sum += h // y-axis
-	}
-	return sum
+	return o
 }

@@ -14,4 +14,3 @@ func reconstructQueue(people [][]int) [][]int {
 	}
 	return out
 }
-

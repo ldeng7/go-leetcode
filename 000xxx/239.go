@@ -1,20 +1,20 @@
-type HeapArray struct {
-	Arr   [][2]int
-	cmpCb func(a, b [2]int) bool
+type PriorityQueue struct {
+	arr    [][2]int
+	lessCb func(a, b [2]int) bool
 }
 
-func (ha *HeapArray) up(j int) {
+func (pq *PriorityQueue) up(j int) {
 	for {
 		i := (j - 1) / 2
-		if i == j || !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if i == j || !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		j = i
 	}
 }
 
-func (ha *HeapArray) down(i0, n int) bool {
+func (pq *PriorityQueue) down(i0, n int) bool {
 	i := i0
 	for {
 		j1 := i<<1 + 1
@@ -22,46 +22,51 @@ func (ha *HeapArray) down(i0, n int) bool {
 			break
 		}
 		j := j1
-		if j2 := j1 + 1; j2 < n && ha.cmpCb(ha.Arr[j2], ha.Arr[j1]) {
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.arr[j2], pq.arr[j1]) {
 			j = j2
 		}
-		if !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		i = j
 	}
 	return i > i0
 }
 
-func (ha *HeapArray) init() {
-	l := len(ha.Arr)
+func (pq *PriorityQueue) Init(arr [][2]int, lessCb func([2]int, [2]int) bool) *PriorityQueue {
+	pq.arr = arr
+	pq.lessCb = lessCb
+	l := len(pq.arr)
 	for i := l>>1 - 1; i >= 0; i-- {
-		ha.down(i, l)
+		pq.down(i, l)
 	}
+	return pq
 }
 
-func NewHeapArray(arr [][2]int) *HeapArray {
-	ha := &HeapArray{
-		Arr:   arr,
-		cmpCb: func(a, b [2]int) bool { return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1]) },
+func (pq *PriorityQueue) Len() int {
+	return len(pq.arr)
+}
+
+func (pq *PriorityQueue) Top() ([2]int, bool) {
+	if len(pq.arr) != 0 {
+		return pq.arr[0], true
 	}
-	ha.init()
-	return ha
+	return [2]int{}, false
 }
 
-func (ha *HeapArray) Push(item [2]int) {
-	ha.Arr = append(ha.Arr, item)
-	ha.up(len(ha.Arr) - 1)
+func (pq *PriorityQueue) Push(item [2]int) {
+	pq.arr = append(pq.arr, item)
+	pq.up(len(pq.arr) - 1)
 }
 
-func (ha *HeapArray) Pop() ([2]int, bool) {
-	i := len(ha.Arr) - 1
+func (pq *PriorityQueue) Pop() ([2]int, bool) {
+	i := len(pq.arr) - 1
 	if i >= 0 {
-		ha.Arr[0], ha.Arr[i] = ha.Arr[i], ha.Arr[0]
-		ha.down(0, i)
-		v := ha.Arr[i]
-		ha.Arr = ha.Arr[:i]
+		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
+		pq.down(0, i)
+		v := pq.arr[i]
+		pq.arr = pq.arr[:i]
 		return v, true
 	}
 	return [2]int{}, false
@@ -69,14 +74,20 @@ func (ha *HeapArray) Pop() ([2]int, bool) {
 
 func maxSlidingWindow(nums []int, k int) []int {
 	out := []int{}
-	h := NewHeapArray(nil)
+	q := (&PriorityQueue{}).Init(nil, func(a, b [2]int) bool {
+		return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1])
+	})
 	for i, _ := range nums {
-		for 0 != len(h.Arr) && h.Arr[0][1] <= i-k {
-			h.Pop()
+		for {
+			if p, ok := q.Top(); !ok || p[1] > i-k {
+				break
+			}
+			q.Pop()
 		}
-		h.Push([2]int{nums[i], i})
+		q.Push([2]int{nums[i], i})
 		if i >= k-1 {
-			out = append(out, h.Arr[0][0])
+			p, _ := q.Top()
+			out = append(out, p[0])
 		}
 	}
 	return out

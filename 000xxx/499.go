@@ -6,8 +6,8 @@ func dup(bs []byte) []byte {
 	return o
 }
 
-var dirs [4][2]int = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
-var ws [4]byte = [4]byte{'u', 'd', 'l', 'r'}
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+var ws = [4]byte{'u', 'd', 'l', 'r'}
 
 func findShortestWay(maze [][]int, ball []int, hole []int) string {
 	maze[hole[0]][hole[1]] = 2

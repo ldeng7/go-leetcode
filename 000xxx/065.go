@@ -7,7 +7,7 @@ const (
 	A_EXP
 )
 
-var trans [9][6]int = [...][6]int{
+var trans = [9][6]int{
 	{-1, 0, 3, 1, 2, -1},
 	{-1, 8, -1, 1, 4, 5},
 	{-1, -1, -1, 4, -1, -1},
@@ -19,7 +19,7 @@ var trans [9][6]int = [...][6]int{
 	{-1, 8, -1, -1, -1, -1},
 }
 
-var endStateValid [9]bool = [...]bool{false, true, false, false, true, false, false, true, true}
+var endStateValid = [9]bool{false, true, false, false, true, false, false, true, true}
 
 func isNumber(s string) bool {
 	st := 0

@@ -1,20 +1,20 @@
-type HeapArray struct {
-	Arr   []int
-	cmpCb func(a, b int) bool
+type PriorityQueue struct {
+	arr    []int
+	lessCb func(a, b int) bool
 }
 
-func (ha *HeapArray) up(j int) {
+func (pq *PriorityQueue) up(j int) {
 	for {
 		i := (j - 1) / 2
-		if i == j || !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if i == j || !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		j = i
 	}
 }
 
-func (ha *HeapArray) down(i0, n int) bool {
+func (pq *PriorityQueue) down(i0, n int) bool {
 	i := i0
 	for {
 		j1 := i<<1 + 1
@@ -22,72 +22,85 @@ func (ha *HeapArray) down(i0, n int) bool {
 			break
 		}
 		j := j1
-		if j2 := j1 + 1; j2 < n && ha.cmpCb(ha.Arr[j2], ha.Arr[j1]) {
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.arr[j2], pq.arr[j1]) {
 			j = j2
 		}
-		if !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		i = j
 	}
 	return i > i0
 }
 
-func (ha *HeapArray) init() {
-	l := len(ha.Arr)
+func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+	pq.arr = arr
+	pq.lessCb = lessCb
+	l := len(pq.arr)
 	for i := l>>1 - 1; i >= 0; i-- {
-		ha.down(i, l)
+		pq.down(i, l)
 	}
+	return pq
 }
 
-func NewHeapArray(arr []int) *HeapArray {
-	ha := &HeapArray{
-		Arr:   arr,
-		cmpCb: func(a, b int) bool { return a < b },
+func (pq *PriorityQueue) Len() int {
+	return len(pq.arr)
+}
+
+func (pq *PriorityQueue) Top() (int, bool) {
+	if len(pq.arr) != 0 {
+		return pq.arr[0], true
 	}
-	ha.init()
-	return ha
+	return 0, false
 }
 
-func (ha *HeapArray) Push(item int) {
-	ha.Arr = append(ha.Arr, item)
-	ha.up(len(ha.Arr) - 1)
+func (pq *PriorityQueue) Push(item int) {
+	pq.arr = append(pq.arr, item)
+	pq.up(len(pq.arr) - 1)
 }
 
-func (ha *HeapArray) Pop() (int, bool) {
-	i := len(ha.Arr) - 1
+func (pq *PriorityQueue) Pop() (int, bool) {
+	i := len(pq.arr) - 1
 	if i >= 0 {
-		ha.Arr[0], ha.Arr[i] = ha.Arr[i], ha.Arr[0]
-		ha.down(0, i)
-		v := ha.Arr[i]
-		ha.Arr = ha.Arr[:i]
+		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
+		pq.down(0, i)
+		v := pq.arr[i]
+		pq.arr = pq.arr[:i]
 		return v, true
 	}
 	return 0, false
 }
 
 type MedianFinder struct {
-	s, l *HeapArray
+	s, l *PriorityQueue
 }
 
 func Constructor() MedianFinder {
-	return MedianFinder{NewHeapArray(nil), NewHeapArray(nil)}
+	return MedianFinder{
+		(&PriorityQueue{}).Init(nil, func(a, b int) bool { return a < b }),
+		(&PriorityQueue{}).Init(nil, func(a, b int) bool { return a < b }),
+	}
 }
 
 func (this *MedianFinder) AddNum(num int) {
 	this.s.Push(num)
-	this.l.Push(-this.s.Arr[0])
+	ts, _ := this.s.Top()
+	this.l.Push(-ts)
 	this.s.Pop()
-	if len(this.s.Arr) < len(this.l.Arr) {
-		this.s.Push(-this.l.Arr[0])
+	if this.s.Len() < this.l.Len() {
+		tl, _ := this.l.Top()
+		this.s.Push(-tl)
 		this.l.Pop()
 	}
 }
 
 func (this *MedianFinder) FindMedian() float64 {
-	if len(this.s.Arr) > len(this.l.Arr) {
-		return float64(this.s.Arr[0])
+	if this.s.Len() > this.l.Len() {
+		t, _ := this.s.Top()
+		return float64(t)
 	}
-	return (float64(this.s.Arr[0]) - float64(this.l.Arr[0])) / 2.0
+	ts, _ := this.s.Top()
+	tl, _ := this.l.Top()
+	return (float64(ts) - float64(tl)) / 2.0
 }

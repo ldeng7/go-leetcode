@@ -7,7 +7,7 @@ func max(a, b int) int {
 	return a
 }
 
-var dirs [4][2]int = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 
 func swimInWater(grid [][]int) int {
 	l := len(grid)

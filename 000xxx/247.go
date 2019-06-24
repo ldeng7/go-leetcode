@@ -3,11 +3,11 @@ import (
 	"unsafe"
 )
 
-var chars3 [3]byte = [...]byte{'0', '1', '8'}
-var chars4a [4]byte = [...]byte{'1', '6', '8', '9'}
-var chars4b [4]byte = [...]byte{'1', '9', '8', '6'}
-var chars5a [5]byte = [...]byte{'0', '1', '6', '8', '9'}
-var chars5b [5]byte = [...]byte{'0', '1', '9', '8', '6'}
+var chars3 = [3]byte{'0', '1', '8'}
+var chars4a = [4]byte{'1', '6', '8', '9'}
+var chars4b = [4]byte{'1', '9', '8', '6'}
+var chars5a = [5]byte{'0', '1', '6', '8', '9'}
+var chars5b = [5]byte{'0', '1', '9', '8', '6'}
 
 func findStrobogrammatic(n int) []string {
 	if 0 == n {

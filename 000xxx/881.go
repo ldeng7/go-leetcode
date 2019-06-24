@@ -1,14 +1,13 @@
 import "sort"
 
 func numRescueBoats(people []int, limit int) int {
-	sort.Sort(sort.Reverse(sort.IntSlice(people)))
+	sort.Ints(people)
 	l, r, o := 0, len(people)-1, 0
 	for l <= r {
 		if people[l]+people[r] <= limit {
-			r--
+			l++
 		}
-		l++
-		o++
+		r, o = r-1, o+1
 	}
 	return o
 }

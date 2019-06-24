@@ -1,4 +1,4 @@
-var cache [22][]*TreeNode = [22][]*TreeNode{}
+var cache = [22][]*TreeNode{}
 
 func init() {
 	for i := 2; i <= 20; i += 2 {

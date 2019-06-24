@@ -1,6 +1,6 @@
 import "math"
 
-var dirs [4][2]int = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 
 func shortestDistance(maze [][]int, start []int, destination []int) int {
 	m, n := len(maze), len(maze[0])

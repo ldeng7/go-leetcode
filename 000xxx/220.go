@@ -1,57 +1,80 @@
 import "sort"
 
-type SortedArray []int
-
-func (sa SortedArray) LowerBound(bound int) int {
-	return sort.Search(len(sa), func(j int) bool {
-		return sa[j] >= bound
-	})
+type OrderedArray struct {
+	arr    []int
+	lessCb func(a, b int) bool
 }
 
-func (sa SortedArray) Index(item int) int {
-	i := sa.LowerBound(item)
-	if i == len(sa) || sa[i] != item {
-		return -1
+func (oa *OrderedArray) Init(arr []int, lessCb func(int, int) bool) *OrderedArray {
+	oa.arr = arr
+	if len(arr) > 1 {
+		sort.Slice(arr, func(i, j int) bool { return lessCb(arr[i], arr[j]) })
+	}
+	oa.lessCb = lessCb
+	return oa
+}
+
+func (oa *OrderedArray) Len() int {
+	return len(oa.arr)
+}
+
+func (oa *OrderedArray) Get(index int) int {
+	return oa.arr[index]
+}
+
+func (oa *OrderedArray) BinSearch(item int) int {
+	i, j := 0, len(oa.arr)
+	for i < j {
+		h := int(uint(i+j) >> 1)
+		if oa.lessCb(oa.arr[h], item) {
+			i = h + 1
+		} else {
+			j = h
+		}
 	}
 	return i
 }
 
-func (sa SortedArray) Add(item int) SortedArray {
-	i := sa.LowerBound(item)
-	if i != len(sa) {
-		sa = append(sa, 0)
-		copy(sa[i+1:], sa[i:])
-		sa[i] = item
+func (oa *OrderedArray) Add(item int) {
+	i := oa.BinSearch(item)
+	if i != len(oa.arr) {
+		oa.arr = append(oa.arr, 0)
+		copy(oa.arr[i+1:], oa.arr[i:])
+		oa.arr[i] = item
 	} else {
-		sa = append(sa, item)
+		oa.arr = append(oa.arr, item)
 	}
-	return sa
 }
 
-func (sa SortedArray) Remove(item int) SortedArray {
-	i := sa.Index(item)
-	if -1 == i {
-		return sa
+func (oa *OrderedArray) RemoveAt(index int) {
+	if index != len(oa.arr)-1 {
+		copy(oa.arr[index:], oa.arr[index+1:])
 	}
-	if i != len(sa)-1 {
-		copy(sa[i:], sa[i+1:])
+	oa.arr = oa.arr[:len(oa.arr)-1]
+}
+
+func (oa *OrderedArray) Remove(item int) bool {
+	i := oa.BinSearch(item)
+	if i == len(oa.arr) || oa.arr[i] != item {
+		return false
 	}
-	return sa[:len(sa)-1]
+	oa.RemoveAt(i)
+	return true
 }
 
 func containsNearbyAlmostDuplicate(nums []int, k int, t int) bool {
-	sa := SortedArray{}
+	oa := (&OrderedArray{}).Init(nil, func(a, b int) bool { return a < b })
 	j := 0
 	for i, num := range nums {
 		if i-j > k {
-			sa = sa.Remove(nums[j])
+			oa.Remove(nums[j])
 			j++
 		}
-		b := sa.LowerBound(num - t)
-		if b != len(sa) && sa[b] <= num+t {
+		h := oa.BinSearch(num - t)
+		if h != oa.Len() && oa.Get(h) <= num+t {
 			return true
 		}
-		sa = sa.Add(num)
+		oa.Add(num)
 	}
 	return false
 }

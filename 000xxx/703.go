@@ -1,50 +1,99 @@
-import "sort"
-
-type SortedArray []int
-
-func (sa SortedArray) LowerBound(bound int) int {
-	return sort.Search(len(sa), func(j int) bool {
-		return sa[j] >= bound
-	})
+type PriorityQueue struct {
+	arr    []int
+	lessCb func(a, b int) bool
 }
 
-func (sa SortedArray) Add(item int) SortedArray {
-	i := sa.LowerBound(item)
-	if i != len(sa) {
-		sa = append(sa, 0)
-		copy(sa[i+1:], sa[i:])
-		sa[i] = item
-	} else {
-		sa = append(sa, item)
+func (pq *PriorityQueue) up(j int) {
+	for {
+		i := (j - 1) / 2
+		if i == j || !pq.lessCb(pq.arr[j], pq.arr[i]) {
+			break
+		}
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
+		j = i
 	}
-	return sa
+}
+
+func (pq *PriorityQueue) down(i0, n int) bool {
+	i := i0
+	for {
+		j1 := i<<1 + 1
+		if j1 >= n || j1 < 0 {
+			break
+		}
+		j := j1
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.arr[j2], pq.arr[j1]) {
+			j = j2
+		}
+		if !pq.lessCb(pq.arr[j], pq.arr[i]) {
+			break
+		}
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
+		i = j
+	}
+	return i > i0
+}
+
+func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+	pq.arr = arr
+	pq.lessCb = lessCb
+	l := len(pq.arr)
+	for i := l>>1 - 1; i >= 0; i-- {
+		pq.down(i, l)
+	}
+	return pq
+}
+
+func (pq *PriorityQueue) Len() int {
+	return len(pq.arr)
+}
+
+func (pq *PriorityQueue) Top() (int, bool) {
+	if len(pq.arr) != 0 {
+		return pq.arr[0], true
+	}
+	return 0, false
+}
+
+func (pq *PriorityQueue) Push(item int) {
+	pq.arr = append(pq.arr, item)
+	pq.up(len(pq.arr) - 1)
+}
+
+func (pq *PriorityQueue) Set(index, item int) {
+	pq.arr[index] = item
+	if !pq.down(index, len(pq.arr)) {
+		pq.up(index)
+	}
 }
 
 type KthLargest struct {
-	k  int
-	sa SortedArray
+	k int
+	q PriorityQueue
 }
 
 func Constructor(k int, nums []int) KthLargest {
-	sort.Ints(nums)
-	i := len(nums) - k
-	if i < 0 {
-		i = 0
+	this := KthLargest{k: k}
+	if k > len(nums) {
+		k = len(nums)
 	}
-	l := len(nums) - i
-	sa := make([]int, l)
-	copy(sa, nums[i:])
-	return KthLargest{k, sa}
+	(&this.q).Init(nums[:k], func(a, b int) bool { return a < b })
+	for _, n := range nums[k:] {
+		if t, _ := this.q.Top(); n > t {
+			this.q.Set(0, n)
+		}
+	}
+	return this
 }
 
 func (this *KthLargest) Add(val int) int {
-	if len(this.sa) == this.k {
-		x := this.sa[0]
-		if val <= x {
-			return x
+	if this.q.Len() == this.k {
+		if t, _ := this.q.Top(); val > t {
+			this.q.Set(0, val)
 		}
-		this.sa = this.sa[1:]
+	} else {
+		this.q.Push(val)
 	}
-	this.sa = this.sa.Add(val)
-	return this.sa[0]
+	t, _ := this.q.Top()
+	return t
 }

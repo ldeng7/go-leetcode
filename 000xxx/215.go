@@ -1,20 +1,20 @@
-type HeapArray struct {
-	Arr   []int
-	cmpCb func(a, b int) bool
+type PriorityQueue struct {
+	arr    []int
+	lessCb func(a, b int) bool
 }
 
-func (ha *HeapArray) up(j int) {
+func (pq *PriorityQueue) up(j int) {
 	for {
 		i := (j - 1) / 2
-		if i == j || !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if i == j || !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		j = i
 	}
 }
 
-func (ha *HeapArray) down(i0, n int) bool {
+func (pq *PriorityQueue) down(i0, n int) bool {
 	i := i0
 	for {
 		j1 := i<<1 + 1
@@ -22,48 +22,49 @@ func (ha *HeapArray) down(i0, n int) bool {
 			break
 		}
 		j := j1
-		if j2 := j1 + 1; j2 < n && ha.cmpCb(ha.Arr[j2], ha.Arr[j1]) {
+		if j2 := j1 + 1; j2 < n && pq.lessCb(pq.arr[j2], pq.arr[j1]) {
 			j = j2
 		}
-		if !ha.cmpCb(ha.Arr[j], ha.Arr[i]) {
+		if !pq.lessCb(pq.arr[j], pq.arr[i]) {
 			break
 		}
-		ha.Arr[i], ha.Arr[j] = ha.Arr[j], ha.Arr[i]
+		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
 		i = j
 	}
 	return i > i0
 }
 
-func (ha *HeapArray) init() {
-	l := len(ha.Arr)
+func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+	pq.arr = arr
+	pq.lessCb = lessCb
+	l := len(pq.arr)
 	for i := l>>1 - 1; i >= 0; i-- {
-		ha.down(i, l)
+		pq.down(i, l)
 	}
+	return pq
 }
 
-func NewHeapArray(arr []int) *HeapArray {
-	ha := &HeapArray{
-		Arr:   arr,
-		cmpCb: func(a, b int) bool { return a < b },
+func (pq *PriorityQueue) Top() (int, bool) {
+	if len(pq.arr) != 0 {
+		return pq.arr[0], true
 	}
-	ha.init()
-	return ha
+	return 0, false
 }
 
-func (ha *HeapArray) Set(index, item int) {
-	ha.Arr[index] = item
-	if !ha.down(index, len(ha.Arr)) {
-		ha.up(index)
+func (pq *PriorityQueue) Set(index, item int) {
+	pq.arr[index] = item
+	if !pq.down(index, len(pq.arr)) {
+		pq.up(index)
 	}
 }
 
 func findKthLargest(nums []int, k int) int {
-	h := NewHeapArray(nums[:k])
-	for _, num := range nums[k:] {
-		if num <= h.Arr[0] {
-			continue
+	q := (&PriorityQueue{}).Init(nums[:k], func(a, b int) bool { return a < b })
+	for _, n := range nums[k:] {
+		if t, _ := q.Top(); n > t {
+			q.Set(0, n)
 		}
-		h.Set(0, num)
 	}
-	return h.Arr[0]
+	t, _ := q.Top()
+	return t
 }

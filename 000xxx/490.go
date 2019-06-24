@@ -1,4 +1,4 @@
-var dirs [4][2]int = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 
 func hasPath(maze [][]int, start []int, destination []int) bool {
 	if 0 == len(maze) || 0 == len(maze[0]) {
