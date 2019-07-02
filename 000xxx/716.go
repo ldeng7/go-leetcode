@@ -1,132 +1,67 @@
-type ListNode struct {
-	Val  int
-	prev *ListNode
-	next *ListNode
-}
-
-type List struct {
-	head *ListNode
-	tail *ListNode
-}
-
-func (l *List) PushBack(n *ListNode) {
-	n.next = nil
-	if l.tail != nil {
-		l.tail.next = n
-	} else {
-		l.head = n
-	}
-	n.prev = l.tail
-	l.tail = n
-}
-
-func (l *List) PopBack() *ListNode {
-	if l.tail == nil {
-		return nil
-	}
-	r := l.tail
-	if r.prev != nil {
-		l.tail = r.prev
-	} else {
-		l.head, l.tail = nil, nil
-	}
-	return r
-}
-
-type Stack interface {
-	Empty() bool
-	Top() (int, bool)
-	Push(item int)
-	Pop() (int, bool)
-}
-
-type ListStack struct {
-	l *List
-}
-
-func NewListStack() Stack {
-	return &ListStack{&List{}}
-}
-
-func (s *ListStack) Empty() bool {
-	return nil == s.l.head
-}
-
-func (s *ListStack) Top() (int, bool) {
-	if nil != s.l.tail {
-		return s.l.tail.Val, true
-	}
-	return 0, false
-}
-
-func (s *ListStack) Push(item int) {
-	s.l.PushBack(&ListNode{Val: item})
-}
-
-func (s *ListStack) Pop() (int, bool) {
-	tail := s.l.PopBack()
-	if nil != tail {
-		return tail.Val, true
-	}
-	return 0, false
-}
-
 type MaxStack struct {
-	s, sm Stack
+	s, sm []int
 }
 
 func Constructor() MaxStack {
-	return MaxStack{NewListStack(), NewListStack()}
+	return MaxStack{make([]int, 0, 32), make([]int, 0, 32)}
 }
 
 func (this *MaxStack) Push(x int) {
-	this.s.Push(x)
-	if t, ok := this.sm.Top(); !ok || t <= x {
-		this.sm.Push(x)
+	this.s = append(this.s, x)
+	if em := len(this.sm) - 1; em < 0 || this.sm[em] <= x {
+		this.sm = append(this.sm, x)
 	}
 }
 
 func (this *MaxStack) Pop() int {
-	t, ok := this.s.Pop()
-	if ok {
-		if tm, _ := this.sm.Top(); tm == t {
-			this.sm.Pop()
+	if e := len(this.s) - 1; e >= 0 {
+		t := this.s[e]
+		this.s = this.s[:e]
+		if em := len(this.sm) - 1; this.sm[em] == t {
+			this.sm = this.sm[:em]
 		}
+		return t
 	}
-	return t
+	return 0
 }
 
 func (this *MaxStack) Top() int {
-	t, _ := this.s.Top()
-	return t
+	if e := len(this.s) - 1; e >= 0 {
+		return this.s[e]
+	}
+	return 0
 }
 
 func (this *MaxStack) PeekMax() int {
-	t, _ := this.sm.Top()
-	return t
+	if em := len(this.sm) - 1; em >= 0 {
+		return this.sm[em]
+	}
+	return 0
 }
 
 func (this *MaxStack) PopMax() int {
-	t, ok := this.sm.Top()
-	if !ok {
+	em := len(this.sm) - 1
+	if em < 0 {
 		return 0
 	}
-	st := NewListStack()
+	tm, s := this.sm[em], []int{}
 	for {
-		t, _ := this.s.Top()
-		tm, _ := this.sm.Top()
+		e := len(this.s) - 1
+		t := this.s[e]
 		if t == tm {
 			break
 		}
-		st.Push(t)
-		this.s.Pop()
+		s = append(s, t)
+		this.s = this.s[:e]
 	}
-	this.s.Pop()
-	this.sm.Pop()
-	for !st.Empty() {
-		t, _ := st.Top()
-		this.Push(t)
-		st.Pop()
+	if e := len(this.s) - 1; e >= 0 {
+		this.s = this.s[:e]
 	}
-	return t
+	if em := len(this.sm) - 1; em >= 0 {
+		this.sm = this.sm[:em]
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		this.Push(s[i])
+	}
+	return tm
 }

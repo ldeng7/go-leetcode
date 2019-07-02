@@ -1,18 +1,20 @@
 func longestPalindrome(s string) string {
-	if 0 == len(s) {
+	l := len(s)
+	if 0 == l {
 		return ""
 	}
-	t := []byte{'#'}
-	for _, c := range []byte(s) {
-		t = append(t, c)
-		t = append(t, '#')
+	t, i := make([]byte, l<<1+1), 1
+	t[0] = '#'
+	for j := 0; j < l; j++ {
+		t[i], t[i+1], i = s[j], '#', i+2
 	}
+	l = len(t)
 
 	m, mi := 0, 0
-	for i := 0; i < len(t); i++ {
+	for i := 0; i < l; i++ {
 		k := i
-		if len(t)-i-1 < k {
-			k = len(t) - i - 1
+		if k1 := l - i - 1; k1 < k {
+			k = k1
 		}
 		j := 1
 		for ; j <= k; j++ {
@@ -24,7 +26,6 @@ func longestPalindrome(s string) string {
 			m, mi = j, i
 		}
 	}
-	var i int
 	if mi&1 == 1 {
 		i = mi/2 + 1 - m/2
 	} else {

@@ -1,4 +1,4 @@
-func find(nums1 []int, nums2 []int, k int) int {
+func cal(nums1 []int, nums2 []int, k int) int {
 	l1, l2 := len(nums1), len(nums2)
 	if 0 == l1 {
 		return nums2[k-1]
@@ -20,14 +20,14 @@ func find(nums1 []int, nums2 []int, k int) int {
 		j = l2
 	}
 	if nums1[i-1] > nums2[j-1] {
-		return find(nums1, nums2[j:], k-j)
+		return cal(nums1, nums2[j:], k-j)
 	} else {
-		return find(nums1[i:], nums2, k-i)
+		return cal(nums1[i:], nums2, k-i)
 	}
 	return 0
 }
 
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	l1, l2 := len(nums1), len(nums2)
-	return float64(find(nums1, nums2, (l1+l2+1)/2)+find(nums1, nums2, (l1+l2+2)/2)) / 2.0
+	return float64(cal(nums1, nums2, (l1+l2+1)/2)+cal(nums1, nums2, (l1+l2+2)/2)) / 2.0
 }

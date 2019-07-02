@@ -1,80 +1,27 @@
-import "sort"
-
-type OrderedArray struct {
-	arr    []int
-	lessCb func(a, b int) bool
-}
-
-func (oa *OrderedArray) Init(arr []int, lessCb func(int, int) bool) *OrderedArray {
-	oa.arr = arr
-	if len(arr) > 1 {
-		sort.Slice(arr, func(i, j int) bool { return lessCb(arr[i], arr[j]) })
-	}
-	oa.lessCb = lessCb
-	return oa
-}
-
-func (oa *OrderedArray) Len() int {
-	return len(oa.arr)
-}
-
-func (oa *OrderedArray) Get(index int) int {
-	return oa.arr[index]
-}
-
-func (oa *OrderedArray) BinSearch(item int) int {
-	i, j := 0, len(oa.arr)
-	for i < j {
-		h := int(uint(i+j) >> 1)
-		if oa.lessCb(oa.arr[h], item) {
-			i = h + 1
-		} else {
-			j = h
-		}
-	}
-	return i
-}
-
-func (oa *OrderedArray) Add(item int) {
-	i := oa.BinSearch(item)
-	if i != len(oa.arr) {
-		oa.arr = append(oa.arr, 0)
-		copy(oa.arr[i+1:], oa.arr[i:])
-		oa.arr[i] = item
-	} else {
-		oa.arr = append(oa.arr, item)
-	}
-}
-
-func (oa *OrderedArray) RemoveAt(index int) {
-	if index != len(oa.arr)-1 {
-		copy(oa.arr[index:], oa.arr[index+1:])
-	}
-	oa.arr = oa.arr[:len(oa.arr)-1]
-}
-
-func (oa *OrderedArray) Remove(item int) bool {
-	i := oa.BinSearch(item)
-	if i == len(oa.arr) || oa.arr[i] != item {
+func containsNearbyAlmostDuplicate(nums []int, k int, t int) bool {
+	if t < 0 {
 		return false
 	}
-	oa.RemoveAt(i)
-	return true
-}
-
-func containsNearbyAlmostDuplicate(nums []int, k int, t int) bool {
-	oa := (&OrderedArray{}).Init(nil, func(a, b int) bool { return a < b })
-	j := 0
-	for i, num := range nums {
-		if i-j > k {
-			oa.Remove(nums[j])
-			j++
+	m := map[int]int{}
+	getKey := func(n int) int {
+		if n >= 0 {
+			return n / (t + 1)
 		}
-		h := oa.BinSearch(num - t)
-		if h != oa.Len() && oa.Get(h) <= num+t {
+		return (n+1)/(t+1) - 1
+	}
+	for i, n := range nums {
+		key := getKey(n)
+		if _, ok := m[key]; ok {
+			return true
+		} else if v, ok := m[key-1]; ok && v >= n-t {
+			return true
+		} else if v, ok = m[key+1]; ok && v <= n+t {
 			return true
 		}
-		oa.Add(num)
+		m[key] = n
+		if len(m) == k+1 {
+			delete(m, getKey(nums[i-k]))
+		}
 	}
 	return false
 }

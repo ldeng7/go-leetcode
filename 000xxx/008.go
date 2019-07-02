@@ -1,8 +1,7 @@
 func myAtoi(str string) int {
-	ds := []byte{}
-	m := false
-	started := false
-	for _, c := range []byte(str) {
+	ds, m, started := []byte{}, false, false
+	for i := 0; i < len(str); i++ {
+		c := str[i]
 		if c == ' ' {
 			if started {
 				break
@@ -10,16 +9,14 @@ func myAtoi(str string) int {
 			continue
 		} else if c == '+' || c == '-' {
 			if !started {
-				started = true
-				m = c == '-'
+				started, m = true, c == '-'
 				continue
 			}
 			break
 		} else if c < '0' || c > '9' {
 			break
 		}
-		started = true
-		ds = append(ds, c)
+		started, ds = true, append(ds, c)
 	}
 
 	dst := []byte{}
@@ -28,8 +25,7 @@ func myAtoi(str string) int {
 		if c == '0' && !started {
 			continue
 		}
-		started = true
-		dst = append(dst, c)
+		started, dst = true, append(dst, c)
 	}
 	ds = dst
 	if len(ds) > 11 {

@@ -1,19 +1,21 @@
 import "sort"
 
-type elemType = int
-type keyType = int
+type oaElemType = int
+type oaElemCmpCb = func(oaElemType, oaElemType) bool
 
 type OrderedArray struct {
-	arr    []elemType
-	lessCb func(a, b elemType) bool
+	arr    []oaElemType
+	lessCb oaElemCmpCb
+	eqCb   oaElemCmpCb
 }
 
-func (oa *OrderedArray) Init(arr []elemType, lessCb func(elemType, elemType) bool) *OrderedArray {
+func (oa *OrderedArray) Init(arr []oaElemType, lessCb, eqCb oaElemCmpCb) *OrderedArray {
 	oa.arr = arr
 	if len(arr) > 1 {
 		sort.Slice(arr, func(i, j int) bool { return lessCb(arr[i], arr[j]) })
 	}
 	oa.lessCb = lessCb
+	oa.eqCb = eqCb
 	return oa
 }
 
@@ -21,11 +23,11 @@ func (oa *OrderedArray) Len() int {
 	return len(oa.arr)
 }
 
-func (oa *OrderedArray) Get(index int) elemType {
+func (oa *OrderedArray) Get(index int) oaElemType {
 	return oa.arr[index]
 }
 
-func (oa *OrderedArray) BinSearch(item elemType) int {
+func (oa *OrderedArray) LowerBound(item oaElemType) int {
 	i, j := 0, len(oa.arr)
 	for i < j {
 		h := int(uint(i+j) >> 1)
@@ -38,25 +40,8 @@ func (oa *OrderedArray) BinSearch(item elemType) int {
 	return i
 }
 
-func (oa *OrderedArray) Index(item elemType) int {
-	i := oa.BinSearch(item)
-	if i == len(oa.arr) || oa.arr[i] != item {
-		return -1
-	}
-	return i
-}
-
-func (oa *OrderedArray) Count(item elemType) int {
-	i := oa.BinSearch(item)
-	if i == len(oa.arr) || oa.arr[i] != item {
-		return 0
-	}
-	ie := oa.BinSearch(item + 1)
-	return ie - i
-}
-
-func (oa *OrderedArray) Add(item elemType) {
-	i := oa.BinSearch(item)
+func (oa *OrderedArray) Add(item oaElemType) {
+	i := oa.LowerBound(item)
 	if i != len(oa.arr) {
 		oa.arr = append(oa.arr, 0)
 		copy(oa.arr[i+1:], oa.arr[i:])
@@ -66,107 +51,33 @@ func (oa *OrderedArray) Add(item elemType) {
 	}
 }
 
-func (oa *OrderedArray) RemoveAt(index int) {
-	if index != len(oa.arr)-1 {
-		copy(oa.arr[index:], oa.arr[index+1:])
-	}
-	oa.arr = oa.arr[:len(oa.arr)-1]
-}
-
-func (oa *OrderedArray) Remove(item elemType) bool {
-	i := oa.BinSearch(item)
-	if i == len(oa.arr) || oa.arr[i] != item {
-		return false
-	}
-	oa.RemoveAt(i)
-	return true
-}
-
-func (oa *OrderedArray) RemoveRange(indexBegin, indexEnd int) {
-	if indexEnd != len(oa.arr) {
-		copy(oa.arr[indexBegin:], oa.arr[indexEnd:])
-	}
-	oa.arr = oa.arr[:len(oa.arr)-(indexEnd-indexBegin)]
-}
-
-func (oa *OrderedArray) RemoveEach(item elemType) int {
-	i := oa.BinSearch(item)
-	if i == len(oa.arr) || oa.arr[i] != item {
-		return 0
-	}
-	ie := oa.BinSearch(item + 1)
-	oa.RemoveRange(i, ie)
-	return ie - i
-}
-
-type ArrayOrderedMap struct {
-	m  map[keyType]elemType
+type MyCalendarThree struct {
+	m  map[int]int
 	oa OrderedArray
 }
 
-func (om *ArrayOrderedMap) Init(lessCb func(keyType, keyType) bool) *ArrayOrderedMap {
-	om.m = map[keyType]elemType{}
-	om.oa.Init(nil, lessCb)
-	return om
-}
-
-func (om *ArrayOrderedMap) Len() int {
-	return len(om.m)
-}
-
-func (om *ArrayOrderedMap) Get(key keyType) (elemType, bool) {
-	v, ok := om.m[key]
-	return v, ok
-}
-
-func (om *ArrayOrderedMap) GetAt(index int) (keyType, elemType) {
-	k := om.oa.Get(index)
-	v, _ := om.m[k]
-	return k, v
-}
-
-func (om *ArrayOrderedMap) BinSearch(key keyType) int {
-	return om.oa.BinSearch(key)
-}
-
-func (om *ArrayOrderedMap) Set(key keyType, value elemType) {
-	if _, ok := om.m[key]; !ok {
-		om.oa.Add(key)
-	}
-	om.m[key] = value
-}
-
-func (om *ArrayOrderedMap) Remove(key keyType) {
-	delete(om.m, key)
-	om.oa.Remove(key)
-}
-
-func (om *ArrayOrderedMap) RemoveRange(indexBegin, indexEnd int) {
-	for i := indexBegin; i < indexEnd; i++ {
-		delete(om.m, om.oa.Get(i))
-	}
-	om.oa.RemoveRange(indexBegin, indexEnd)
-}
-
-type MyCalendarThree struct {
-	om ArrayOrderedMap
-}
-
 func Constructor() MyCalendarThree {
-	this := MyCalendarThree{}
-	this.om.Init(func(a, b keyType) bool { return a < b })
+	this := MyCalendarThree{m: map[int]int{}}
+	this.oa.Init(nil,
+		func(a, b int) bool { return a < b },
+		func(a, b int) bool { return a == b },
+	)
 	return this
 }
 
 func (this *MyCalendarThree) Book(start int, end int) int {
-	v, _ := this.om.Get(start)
-	this.om.Set(start, v+1)
-	v, _ = this.om.Get(end)
-	this.om.Set(end, v-1)
-	c, o, l := 0, 0, this.om.Len()
+	if _, ok := this.m[start]; !ok {
+		this.oa.Add(start)
+	}
+	this.m[start]++
+	if _, ok := this.m[end]; !ok {
+		this.oa.Add(end)
+	}
+	this.m[end]--
+
+	c, o, l := 0, 0, this.oa.Len()
 	for i := 0; i < l; i++ {
-		_, v := this.om.GetAt(i)
-		c += v
+		c += this.m[this.oa.Get(i)]
 		if c > o {
 			o = c
 		}

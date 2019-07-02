@@ -1,48 +1,47 @@
-type Stack interface {
-	Empty() bool
-	Top() (int, bool)
-	Push(item int)
-	Pop() (int, bool)
-}
+type stackElemType = int
 
 type ArrayStack struct {
-	arr []int
+	arr []stackElemType
 }
 
-func NewArrayStack() Stack {
-	return &ArrayStack{[]int{}}
+func (s *ArrayStack) Init() *ArrayStack {
+	s.arr = []stackElemType{}
+	return s
 }
 
 func (s *ArrayStack) Empty() bool {
 	return len(s.arr) == 0
 }
 
-func (s *ArrayStack) Top() (int, bool) {
-	if len(s.arr) != 0 {
-		return s.arr[len(s.arr)-1], true
+func (s *ArrayStack) Top() *stackElemType {
+	if e := len(s.arr) - 1; e >= 0 {
+		return &s.arr[e]
 	}
-	return 0, false
+	return nil
 }
 
-func (s *ArrayStack) Push(item int) {
+func (s *ArrayStack) Push(item stackElemType) {
 	s.arr = append(s.arr, item)
 }
 
-func (s *ArrayStack) Pop() (int, bool) {
-	if len(s.arr) != 0 {
-		item := s.arr[len(s.arr)-1]
-		s.arr = s.arr[:len(s.arr)-1]
-		return item, true
+func (s *ArrayStack) Pop() *stackElemType {
+	if e := len(s.arr) - 1; e >= 0 {
+		t := s.arr[e]
+		s.arr = s.arr[:e]
+		return &t
 	}
-	return 0, false
+	return nil
 }
 
 type MyQueue struct {
-	s, st Stack
+	s, st ArrayStack
 }
 
 func Constructor() MyQueue {
-	return MyQueue{NewArrayStack(), NewArrayStack()}
+	this := &MyQueue{}
+	this.s.Init()
+	this.st.Init()
+	return *this
 }
 
 func (this *MyQueue) Push(x int) {
@@ -50,31 +49,33 @@ func (this *MyQueue) Push(x int) {
 }
 
 func (this *MyQueue) Pop() int {
-	x := -1
+	o := -1
 	for !this.s.Empty() {
-		x, _ = this.s.Pop()
+		x := this.s.Pop()
+		o = *x
 		if !this.s.Empty() {
-			this.st.Push(x)
+			this.st.Push(o)
 		}
 	}
 	for !this.st.Empty() {
-		y, _ := this.st.Pop()
-		this.s.Push(y)
+		x := this.st.Pop()
+		this.s.Push(*x)
 	}
-	return x
+	return o
 }
 
 func (this *MyQueue) Peek() int {
-	x := -1
+	o := -1
 	for !this.s.Empty() {
-		x, _ = this.s.Pop()
-		this.st.Push(x)
+		x := this.s.Pop()
+		o = *x
+		this.st.Push(o)
 	}
 	for !this.st.Empty() {
-		y, _ := this.st.Pop()
-		this.s.Push(y)
+		x := this.st.Pop()
+		this.s.Push(*x)
 	}
-	return x
+	return o
 }
 
 func (this *MyQueue) Empty() bool {

@@ -1,21 +1,25 @@
 import "sort"
 
-type elemType = int
+type oaElemType = int
+type oaElemCmpCb = func(oaElemType, oaElemType) bool
+
 type OrderedArray struct {
-	arr    []elemType
-	lessCb func(a, b elemType) bool
+	arr    []oaElemType
+	lessCb oaElemCmpCb
+	eqCb   oaElemCmpCb
 }
 
-func (oa *OrderedArray) Init(arr []elemType, lessCb func(elemType, elemType) bool) *OrderedArray {
+func (oa *OrderedArray) Init(arr []oaElemType, lessCb, eqCb oaElemCmpCb) *OrderedArray {
 	oa.arr = arr
 	if len(arr) > 1 {
 		sort.Slice(arr, func(i, j int) bool { return lessCb(arr[i], arr[j]) })
 	}
 	oa.lessCb = lessCb
+	oa.eqCb = eqCb
 	return oa
 }
 
-func (oa *OrderedArray) BinSearch(item elemType) int {
+func (oa *OrderedArray) LowerBound(item oaElemType) int {
 	i, j := 0, len(oa.arr)
 	for i < j {
 		h := int(uint(i+j) >> 1)
@@ -28,8 +32,8 @@ func (oa *OrderedArray) BinSearch(item elemType) int {
 	return i
 }
 
-func (oa *OrderedArray) Add(item elemType) {
-	i := oa.BinSearch(item)
+func (oa *OrderedArray) Add(item oaElemType) {
+	i := oa.LowerBound(item)
 	if i != len(oa.arr) {
 		oa.arr = append(oa.arr, 0)
 		copy(oa.arr[i+1:], oa.arr[i:])
@@ -41,10 +45,13 @@ func (oa *OrderedArray) Add(item elemType) {
 
 func countRangeSum(nums []int, lower int, upper int) int {
 	o, s := 0, 0
-	ss := (&OrderedArray{}).Init([]int{0}, func(a, b int) bool { return a < b })
+	ss := (&OrderedArray{}).Init([]int{0},
+		func(a, b int) bool { return a < b },
+		func(a, b int) bool { return a == b },
+	)
 	for _, n := range nums {
 		s += n
-		o += ss.BinSearch(s-lower+1) - ss.BinSearch(s-upper)
+		o += ss.LowerBound(s-lower+1) - ss.LowerBound(s-upper)
 		ss.Add(s)
 	}
 	return o

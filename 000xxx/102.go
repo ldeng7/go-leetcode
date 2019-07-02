@@ -6,7 +6,7 @@ func levelOrder(root *TreeNode) [][]int {
 			return
 		}
 		if level == len(out) {
-			out = append(out, []int{})
+			out = append(out, nil)
 		}
 		out[level] = append(out[level], node.Val)
 		cal(node.Left, level+1)

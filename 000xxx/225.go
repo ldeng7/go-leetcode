@@ -1,35 +1,31 @@
-type Queue interface {
-	Empty() bool
-	Top() (int, bool)
-	Push(item int)
-	Pop() (int, bool)
-}
+type queueElemType = int
 
 type ArrayQueue struct {
-	arr []int
+	arr []queueElemType
 	i   int
 }
 
-func NewArrayQueue() Queue {
-	return &ArrayQueue{[]int{}, 0}
+func (q *ArrayQueue) Init() *ArrayQueue {
+	q.arr = []queueElemType{}
+	return q
 }
 
 func (q *ArrayQueue) Empty() bool {
 	return len(q.arr)-q.i == 0
 }
 
-func (q *ArrayQueue) Top() (int, bool) {
+func (q *ArrayQueue) Top() *queueElemType {
 	if len(q.arr)-q.i != 0 {
-		return q.arr[q.i], true
+		return &q.arr[q.i]
 	}
-	return 0, false
+	return nil
 }
 
-func (q *ArrayQueue) Push(item int) {
+func (q *ArrayQueue) Push(item queueElemType) {
 	if len(q.arr) <= 32 || q.i <= (len(q.arr)>>1) {
 		q.arr = append(q.arr, item)
 	} else {
-		arr := make([]int, len(q.arr)-q.i+1)
+		arr := make([]queueElemType, len(q.arr)-q.i+1)
 		copy(arr, q.arr[q.i:])
 		arr[len(arr)-1] = item
 		q.arr = arr
@@ -37,21 +33,24 @@ func (q *ArrayQueue) Push(item int) {
 	}
 }
 
-func (q *ArrayQueue) Pop() (int, bool) {
+func (q *ArrayQueue) Pop() *queueElemType {
 	if len(q.arr)-q.i != 0 {
-		item := q.arr[q.i]
+		e := q.arr[q.i]
 		q.i++
-		return item, true
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
 type MyStack struct {
-	q, qt Queue
+	q, qt ArrayQueue
 }
 
 func Constructor() MyStack {
-	return MyStack{NewArrayQueue(), NewArrayQueue()}
+	this := &MyStack{}
+	this.q.Init()
+	this.qt.Init()
+	return *this
 }
 
 func (this *MyStack) Push(x int) {
@@ -59,31 +58,33 @@ func (this *MyStack) Push(x int) {
 }
 
 func (this *MyStack) Pop() int {
-	x := -1
+	o := -1
 	for !this.q.Empty() {
-		x, _ = this.q.Pop()
+		x := this.q.Pop()
+		o = *x
 		if !this.q.Empty() {
-			this.qt.Push(x)
+			this.qt.Push(o)
 		}
 	}
 	for !this.qt.Empty() {
-		y, _ := this.qt.Pop()
-		this.q.Push(y)
+		x := this.qt.Pop()
+		this.q.Push(*x)
 	}
-	return x
+	return o
 }
 
 func (this *MyStack) Top() int {
-	x := -1
+	o := -1
 	for !this.q.Empty() {
-		x, _ = this.q.Pop()
-		this.qt.Push(x)
+		x := this.q.Pop()
+		o = *x
+		this.qt.Push(o)
 	}
 	for !this.qt.Empty() {
-		y, _ := this.qt.Pop()
-		this.q.Push(y)
+		x := this.qt.Pop()
+		this.q.Push(*x)
 	}
-	return x
+	return o
 }
 
 func (this *MyStack) Empty() bool {

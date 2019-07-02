@@ -1,7 +1,6 @@
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	h := &ListNode{}
-	l := h
-	c := 0
+	n, c := h, 0
 	for nil != l1 || nil != l2 {
 		d1, d2 := 0, 0
 		if nil != l1 {
@@ -17,8 +16,8 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 		} else {
 			c = 0
 		}
-		l.Next = &ListNode{Val: d}
-		l = l.Next
+		n.Next = &ListNode{Val: d}
+		n = n.Next
 		if nil != l1 {
 			l1 = l1.Next
 		}
@@ -27,7 +26,7 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 		}
 	}
 	if 1 == c {
-		l.Next = &ListNode{Val: 1}
+		n.Next = &ListNode{Val: 1}
 	}
 	return h.Next
 }
