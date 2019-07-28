@@ -19,7 +19,7 @@ func (t *Trie) Add(word string) {
 	n.str = word
 }
 
-var dirs = [4][4]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 
 func findWords(board [][]byte, words []string) []string {
 	o := []string{}

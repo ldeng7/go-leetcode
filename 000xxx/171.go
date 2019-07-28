@@ -1,9 +1,8 @@
 func titleToNumber(s string) int {
-	sum := 0
-	base := 1
+	o, b := 0, 1
 	for i := len(s) - 1; i >= 0; i-- {
-		sum += int(s[i]-'A'+1) * base
-		base *= 26
+		o += int(s[i]-'A'+1) * b
+		b *= 26
 	}
-	return sum
+	return o
 }

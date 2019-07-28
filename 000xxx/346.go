@@ -1,8 +1,7 @@
 type MovingAverage struct {
-	ar  []int
-	c   int
-	i   int
-	sum int
+	ar   []int
+	c, i int
+	sum  int
 }
 
 func Constructor(size int) MovingAverage {

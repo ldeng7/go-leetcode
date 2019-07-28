@@ -1,17 +1,20 @@
 func generateParenthesis(n int) []string {
-	strs := []string{}
-	var gen func(int, int, int, string)
-	gen = func(a, b, n int, s string) {
+	o, bs := []string{}, []byte{}
+	var cal func(int, int)
+	cal = func(a, b int) {
 		if a == n && b == n {
-			strs = append(strs, s)
+			o = append(o, string(bs))
 			return
 		}
 		if b > a || b > n || a > n {
 			return
 		}
-		gen(a+1, b, n, s+"(")
-		gen(a, b+1, n, s+")")
+		bs = append(bs, '(')
+		cal(a+1, b)
+		bs[len(bs)-1] = ')'
+		cal(a, b+1)
+		bs = bs[:len(bs)-1]
 	}
-	gen(0, 0, n, "")
-	return strs
+	cal(0, 0)
+	return o
 }

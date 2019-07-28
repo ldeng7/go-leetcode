@@ -1,5 +1,6 @@
 func nextPermutation(nums []int) {
-	i, j := len(nums)-2, len(nums)-1
+	l := len(nums)
+	i, j := l-2, l-1
 	for i >= 0 && nums[i] >= nums[i+1] {
 		i--
 	}
@@ -9,7 +10,7 @@ func nextPermutation(nums []int) {
 		}
 		nums[i], nums[j] = nums[j], nums[i]
 	}
-	for k := 0; k < (len(nums)-i-1)>>1; k++ {
-		nums[i+1+k], nums[len(nums)-1-k] = nums[len(nums)-1-k], nums[i+1+k]
+	for k := 0; k < (l-i-1)>>1; k++ {
+		nums[i+1+k], nums[l-1-k] = nums[l-1-k], nums[i+1+k]
 	}
 }

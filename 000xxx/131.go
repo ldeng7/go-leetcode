@@ -1,7 +1,5 @@
 func partition(s string) [][]string {
-	l := len(s)
-	out := [][]string{}
-	ar := []string{}
+	o, l, ar := [][]string{}, len(s), []string{}
 	t := make([][]bool, l)
 	for i := 0; i < l; i++ {
 		t[i] = make([]bool, l)
@@ -19,7 +17,7 @@ func partition(s string) [][]string {
 		if b == l {
 			ar1 := make([]string, len(ar))
 			copy(ar1, ar)
-			out = append(out, ar1)
+			o = append(o, ar1)
 			return
 		}
 		for i := b; i < l; i++ {
@@ -33,5 +31,5 @@ func partition(s string) [][]string {
 	}
 
 	cal(0)
-	return out
+	return o
 }

@@ -1,6 +1,10 @@
 func rangeBitwiseAnd(m int, n int) int {
-	for m < n {
-		n &= (n - 1)
+	if 0 == m {
+		return 0
 	}
-	return n
+	t := 1
+	for m != n {
+		m, n, t = m>>1, n>>1, t<<1
+	}
+	return m * t
 }

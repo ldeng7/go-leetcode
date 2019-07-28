@@ -1,28 +1,28 @@
 import "sort"
 
 func permuteUnique(nums []int) [][]int {
-	out := [][]int{}
+	o := [][]int{}
 	sort.Ints(nums)
 	var permute func(int)
-	permute = func(start int) {
-		if start >= len(nums) {
+	permute = func(b int) {
+		if b >= len(nums) {
 			nums1 := make([]int, len(nums))
 			copy(nums1, nums)
-			out = append(out, nums1)
+			o = append(o, nums1)
 		}
-		for i := start; i < len(nums); i++ {
+		for i := b; i < len(nums); i++ {
 			j := i - 1
-			for j >= start && nums[j] != nums[i] {
+			for j >= b && nums[j] != nums[i] {
 				j--
 			}
-			if j != start-1 {
+			if j != b-1 {
 				continue
 			}
-			nums[i], nums[start] = nums[start], nums[i]
-			permute(start + 1)
-			nums[i], nums[start] = nums[start], nums[i]
+			nums[i], nums[b] = nums[b], nums[i]
+			permute(b + 1)
+			nums[i], nums[b] = nums[b], nums[i]
 		}
 	}
 	permute(0)
-	return out
+	return o
 }

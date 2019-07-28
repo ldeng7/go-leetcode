@@ -1,7 +1,7 @@
 func singleNumber(nums []int) int {
-	out := 0
+	o := 0
 	for _, n := range nums {
-		out ^= n
+		o ^= n
 	}
-	return out
+	return o
 }

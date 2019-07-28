@@ -13,9 +13,9 @@ func levelOrderBottom(root *TreeNode) [][]int {
 		cal(node.Right, level+1)
 	}
 	cal(root, 0)
-	out1 := make([][]int, len(out))
+	o := make([][]int, len(out))
 	for i, ar := range out {
-		out1[len(out)-i-1] = ar
+		o[len(out)-i-1] = ar
 	}
-	return out1
+	return o
 }

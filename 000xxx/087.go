@@ -1,8 +1,7 @@
 func isScramble(s1 string, s2 string) bool {
 	if len(s1) != len(s2) {
 		return false
-	}
-	if s1 == s2 {
+	} else if s1 == s2 {
 		return true
 	}
 	var m [26]int

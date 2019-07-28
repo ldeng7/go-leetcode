@@ -1,17 +1,18 @@
 import "strconv"
 
 func evalRPN(tokens []string) int {
-	var cal func(*int) int
-	cal = func(i *int) int {
-		op := tokens[*i]
+	i := len(tokens) - 1
+	var cal func() int
+	cal = func() int {
+		op := tokens[i]
 		if op != "+" && op != "-" && op != "*" && op != "/" {
 			n, _ := strconv.Atoi(op)
 			return n
 		}
-		*i--
-		n1 := cal(i)
-		*i--
-		n2 := cal(i)
+		i--
+		n1 := cal()
+		i--
+		n2 := cal()
 		switch op {
 		case "+":
 			return n2 + n1
@@ -24,6 +25,5 @@ func evalRPN(tokens []string) int {
 		}
 		return 0
 	}
-	i := len(tokens) - 1
-	return cal(&i)
+	return cal()
 }

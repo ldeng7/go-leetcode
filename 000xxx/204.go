@@ -14,11 +14,11 @@ func countPrimes(n int) int {
 			}
 		}
 	}
-	cnt := 0
+	o := 0
 	for _, b := range m {
 		if !b {
-			cnt++
+			o++
 		}
 	}
-	return cnt
+	return o
 }

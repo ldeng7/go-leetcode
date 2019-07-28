@@ -4,11 +4,10 @@ func wordBreak(s string, wordDict []string) []string {
 	cal = func(s string) []string {
 		if ar, ok := m[s]; ok {
 			return ar
-		}
-		if 0 == len(s) {
+		} else if 0 == len(s) {
 			return []string{""}
 		}
-		out := []string{}
+		o := []string{}
 		for _, w := range wordDict {
 			l := len(w)
 			if len(s) < l {
@@ -24,11 +23,11 @@ func wordBreak(s string, wordDict []string) []string {
 					s1 += " "
 					s1 += t
 				}
-				out = append(out, s1)
+				o = append(o, s1)
 			}
 		}
-		m[s] = out
-		return out
+		m[s] = o
+		return o
 	}
 	return cal(s)
 }

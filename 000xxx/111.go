@@ -6,8 +6,7 @@ func minDepth(root *TreeNode) int {
 	dr := minDepth(root.Right)
 	if dl == 0 {
 		return 1 + dr
-	}
-	if dr == 0 {
+	} else if dr == 0 {
 		return 1 + dl
 	}
 	if dr < dl {

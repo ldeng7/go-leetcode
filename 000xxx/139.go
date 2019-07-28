@@ -3,9 +3,10 @@ func wordBreak(s string, wordDict []string) bool {
 	for _, w := range wordDict {
 		m[w] = true
 	}
-	t := make([]bool, len(s)+1)
+	l := len(s)
+	t := make([]bool, l+1)
 	t[0] = true
-	for i := 0; i <= len(s); i++ {
+	for i := 0; i <= l; i++ {
 		for j := 0; j < i; j++ {
 			if t[j] && m[s[j:i]] {
 				t[i] = true
@@ -13,5 +14,5 @@ func wordBreak(s string, wordDict []string) bool {
 			}
 		}
 	}
-	return t[len(s)]
+	return t[l]
 }

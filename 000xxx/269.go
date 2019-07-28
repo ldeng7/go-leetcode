@@ -1,9 +1,5 @@
 func alienOrder(words []string) string {
-	t := make([][]bool, 26)
-	for i := 0; i < 26; i++ {
-		t[i] = make([]bool, 26)
-	}
-	v := make([]bool, 26)
+	t, v := [26][26]bool{}, [26]bool{}
 	bs := []byte{}
 	for _, w := range words {
 		for _, c := range []byte(w) {

@@ -18,7 +18,7 @@ func (this *Solution) Pick() []int {
 			rect = r
 		}
 	}
-	x := rand.Intn(rect[2]-rect[0]+1) + rect[0]
-	y := rand.Intn(rect[3]-rect[1]+1) + rect[1]
-	return []int{x, y}
+	y := rand.Intn(rect[2]-rect[0]+1) + rect[0]
+	x := rand.Intn(rect[3]-rect[1]+1) + rect[1]
+	return []int{y, x}
 }

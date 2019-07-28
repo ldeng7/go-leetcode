@@ -1,6 +1,7 @@
 func isPalindrome(s string) bool {
-	bs := []byte{}
-	for _, c := range []byte(s) {
+	l, bs := len(s), []byte{}
+	for i := 0; i < l; i++ {
+		c := s[i]
 		if (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') {
 			bs = append(bs, c)
 		}
@@ -8,8 +9,9 @@ func isPalindrome(s string) bool {
 			bs = append(bs, c+('a'-'A'))
 		}
 	}
-	for i := 0; i < (len(bs) >> 1); i++ {
-		if bs[i] != bs[len(bs)-1-i] {
+	l = len(bs)
+	for i := 0; i < l>>1; i++ {
+		if bs[i] != bs[l-1-i] {
 			return false
 		}
 	}

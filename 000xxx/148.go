@@ -1,8 +1,7 @@
 func merge(l1, l2 *ListNode) *ListNode {
 	if nil == l1 {
 		return l2
-	}
-	if nil == l2 {
+	} else if nil == l2 {
 		return l1
 	}
 	if l1.Val < l2.Val {

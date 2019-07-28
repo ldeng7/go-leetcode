@@ -1,36 +1,45 @@
 import "sort"
 
 func fourSum(nums []int, target int) [][]int {
+	o, l := [][]int{}, len(nums)
 	sort.Ints(nums)
-	out := [][]int{}
-	for i := 0; i < len(nums)-3; i++ {
-		for j := i + 1; j < len(nums)-2; j++ {
-			if j > i+1 && nums[j] == nums[j-1] {
+	for i := 0; i < l-3; i++ {
+		ni := nums[i]
+		if i != 0 && ni == nums[i-1] {
+			continue
+		}
+		if ni+nums[i+1]+nums[i+2]+nums[i+3] > target {
+			break
+		}
+		if ni+nums[l-1]+nums[l-2]+nums[l-2] < target {
+			continue
+		}
+		for j := i + 1; j < l-2; j++ {
+			nj := nums[j]
+			if j != i+1 && nj == nums[j-1] {
 				continue
 			}
-			k, l := j+1, len(nums)-1
-			for k < l {
-				s := nums[i] + nums[j] + nums[k] + nums[l]
-				if s == target {
-					ok := true
-					for _, o := range out {
-						if o[0] == nums[i] && o[1] == nums[j] && o[2] == nums[k] && o[3] == nums[l] {
-							ok = false
-							break
-						}
+			if ni+nj+nums[j+1]+nums[j+2] > target {
+				break
+			}
+			if ni+nj+nums[l-1]+nums[l-2] < target {
+				continue
+			}
+			b, e := j+1, l-1
+			for b < e {
+				t := ni + nj + nums[b] + nums[e]
+				if t == target {
+					o, b = append(o, []int{ni, nj, nums[b], nums[e]}), b+1
+					for b < e && nums[b] == nums[b-1] {
+						b++
 					}
-					if ok {
-						out = append(out, []int{nums[i], nums[j], nums[k], nums[l]})
-					}
-					k++
-					l--
-				} else if s < target {
-					k++
+				} else if t > target {
+					e--
 				} else {
-					l--
+					b++
 				}
 			}
 		}
 	}
-	return out
+	return o
 }

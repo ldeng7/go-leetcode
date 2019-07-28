@@ -1,33 +1,31 @@
-func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
-	h := &ListNode{}
-	l := h
-	for nil != l1 && nil != l2 {
-		if l1.Val <= l2.Val {
-			l.Next = l1
-			l1 = l1.Next
+func merge2Lists(l1, l2 *ListNode) *ListNode {
+	n := &ListNode{}
+	h := n
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			l1, n.Next = l1.Next, l1
 		} else {
-			l.Next = l2
-			l2 = l2.Next
+			n.Next = l2
+			l1, l2 = n.Next.Next, l1
 		}
-		l = l.Next
+		n = n.Next
 	}
 	if l1 != nil {
-		l.Next = l1
-	} else {
-		l.Next = l2
+		n.Next = l1
+	}
+	if l2 != nil {
+		n.Next = l2
 	}
 	return h.Next
 }
 
 func mergeKLists(lists []*ListNode) *ListNode {
-	if 0 == len(lists) {
+	l := len(lists)
+	if l == 0 {
 		return nil
-	} else if 1 == len(lists) {
+	} else if l == 1 {
 		return lists[0]
 	}
-	h := lists[0]
-	for _, l := range lists[1:] {
-		h = mergeTwoLists(h, l)
-	}
-	return h
+	m := l >> 1
+	return merge2Lists(mergeKLists(lists[:m]), mergeKLists(lists[m:]))
 }

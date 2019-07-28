@@ -6,8 +6,7 @@ func rotateRight(head *ListNode, k int) *ListNode {
 	for ; n.Next != nil; n = n.Next {
 		c++
 	}
-	n.Next = head
-	n = head
+	n, n.Next = head, head
 	for i := 0; i < c-k%c-1; i++ {
 		n = n.Next
 	}

@@ -1,5 +1,6 @@
 import (
 	"fmt"
+	"strconv"
 )
 
 func findMissingRanges(nums []int, lower int, upper int) []string {
@@ -24,7 +25,7 @@ func findMissingRanges(nums []int, lower int, upper int) []string {
 		if r[0] != r[1] {
 			out[i] = fmt.Sprintf("%d->%d", r[0], r[1])
 		} else {
-			out[i] = fmt.Sprintf("%d", r[0])
+			out[i] = strconv.Itoa(r[0])
 		}
 	}
 	return out

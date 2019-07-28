@@ -28,7 +28,7 @@ func findShortestWay(maze [][]int, ball []int, hole []int) string {
 		q = q[1:]
 		for i, dir := range dirs {
 			y, x := h[0], h[1]
-			t0, j := t[y][x], y*n+x
+			t0, j := t[y][x], (y<<8)|x
 			for y >= 0 && y < m && x >= 0 && x < n && maze[y][x] == 0 {
 				y, x, t0 = y+dir[0], x+dir[1], t0+1
 			}
@@ -41,7 +41,7 @@ func findShortestWay(maze [][]int, ball []int, hole []int) string {
 			p := dup(mp[j])
 			p = append(p, ws[i])
 
-			j1 := y*n + x
+			j1 := (y << 8) | x
 			if t[y][x] > t0 {
 				t[y][x], mp[j1] = t0, p
 				if maze[y][x] != 2 {
@@ -56,7 +56,7 @@ func findShortestWay(maze [][]int, ball []int, hole []int) string {
 		}
 	}
 
-	out := mp[hole[0]*n+hole[1]]
+	out := mp[(hole[0]<<8)|hole[1]]
 	if 0 == len(out) {
 		return "impossible"
 	}

@@ -15,7 +15,7 @@ func (this *BSTIterator) Next() int {
 	l := len(this.st)
 	n := this.st[l-1]
 	this.st = this.st[:l-1]
-	out := n.Val
+	o := n.Val
 	if nil != n.Right {
 		n = n.Right
 		for nil != n {
@@ -23,7 +23,7 @@ func (this *BSTIterator) Next() int {
 			n = n.Left
 		}
 	}
-	return out
+	return o
 }
 
 func (this *BSTIterator) HasNext() bool {

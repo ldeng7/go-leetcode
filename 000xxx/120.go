@@ -1,13 +1,13 @@
 func minimumTotal(triangle [][]int) int {
-	if 0 == len(triangle) {
+	l := len(triangle)
+	if 0 == l {
 		return 0
-	} else if 1 == len(triangle) {
+	} else if 1 == l {
 		return triangle[0][0]
 	}
-	t := make([]int, len(triangle))
-	s := make([]int, len(triangle))
+	t, s := make([]int, l), make([]int, l)
 	t[0] = triangle[0][0]
-	for i := 1; i < len(triangle); i++ {
+	for i := 1; i < l; i++ {
 		for j := 0; j <= i; j++ {
 			s[j] = triangle[i][j]
 			if j == 0 {
@@ -25,7 +25,7 @@ func minimumTotal(triangle [][]int) int {
 		}
 	}
 	out := s[0]
-	for i := 1; i < len(triangle); i++ {
+	for i := 1; i < l; i++ {
 		if s[i] < out {
 			out = s[i]
 		}

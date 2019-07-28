@@ -1,15 +1,17 @@
 func isIsomorphic(s string, t string) bool {
-	ms := map[byte]int{}
-	mt := map[byte]int{}
-	for i := 0; i < len(s); i++ {
-		bs, bt := s[i], t[i]
-		is, oks := ms[bs]
-		it, okt := mt[bt]
-		if is != it || oks != okt {
+	l := len(s)
+	m := make(map[byte]byte, l)
+	m1 := make(map[byte]bool, l)
+	for i := 0; i < l; i++ {
+		cs, ct := s[i], t[i]
+		if v, ok := m[cs]; !ok {
+			if m1[ct] {
+				return false
+			}
+			m[cs], m1[ct] = ct, true
+		} else if v != ct {
 			return false
 		}
-		ms[bs] = i
-		mt[bt] = i
 	}
 	return true
 }

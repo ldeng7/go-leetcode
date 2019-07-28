@@ -1,7 +1,7 @@
 import "fmt"
 
 func getHint(secret string, guess string) string {
-	m := make([]int, 256)
+	m := [256]int{}
 	nb, nc := 0, 0
 	for i, s := range []byte(secret) {
 		if s == guess[i] {

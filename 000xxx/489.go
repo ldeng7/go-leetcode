@@ -1,5 +1,6 @@
+var dirs = [4][2]int{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}
+
 func cleanRoom(robot *Robot) {
-	dirs := [][]int{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}
 	m := map[int]map[int]bool{}
 	var cal func(int, int, int)
 	cal = func(y, x, dir int) {

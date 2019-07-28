@@ -1,21 +1,20 @@
 import (
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func largestNumber(nums []int) string {
-	sort.Slice(nums, func(i, j int) bool {
-		a, b := strconv.Itoa(nums[i]), strconv.Itoa(nums[j])
-		na, _ := strconv.Atoi(a + b)
-		nb, _ := strconv.Atoi(b + a)
-		return na < nb
+	ss := make([]string, len(nums))
+	for i, num := range nums {
+		ss[i] = strconv.Itoa(num)
+	}
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i]+ss[j] >= ss[j]+ss[i]
 	})
-	if 0 == nums[len(nums)-1] {
+	o := strings.Join(ss, "")
+	if o[0] == '0' {
 		return "0"
 	}
-	s := ""
-	for i := len(nums) - 1; i >= 0; i-- {
-		s += strconv.Itoa(nums[i])
-	}
-	return s
+	return o
 }

@@ -12,8 +12,7 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	cal = func(i int) bool {
 		if v[i] == -1 {
 			return false
-		}
-		if v[i] == 1 {
+		} else if v[i] == 1 {
 			return true
 		}
 		v[i] = -1

@@ -1,7 +1,7 @@
 func majorityElement(nums []int) int {
 	m := map[int]int{}
 	for _, num := range nums {
-		m[num] = m[num] + 1
+		m[num]++
 	}
 	h := len(nums) >> 1
 	if len(nums)&1 == 1 {

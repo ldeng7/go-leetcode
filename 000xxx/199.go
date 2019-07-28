@@ -8,17 +8,17 @@ func rightSideView(root *TreeNode) []int {
 		out = append(out, q[0].Val)
 		l := len(q)
 		for i := 0; i < l; i++ {
-			node := q[len(q)-1]
+			n := q[len(q)-1]
 			q = q[:len(q)-1]
-			if nil != node.Left {
+			if nil != n.Left {
 				q = append(q, nil)
-				copy(q[1:], q[:len(q)-1])
-				q[0] = node.Left
+				copy(q[1:], q)
+				q[0] = n.Left
 			}
-			if nil != node.Right {
+			if nil != n.Right {
 				q = append(q, nil)
-				copy(q[1:], q[:len(q)-1])
-				q[0] = node.Right
+				copy(q[1:], q)
+				q[0] = n.Right
 			}
 		}
 	}

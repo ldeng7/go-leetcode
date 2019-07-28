@@ -5,9 +5,9 @@ func convertToTitle(n int) string {
 		bs = append(bs, 'A'+byte(n%26))
 		n /= 26
 	}
-	bsr := make([]byte, len(bs))
-	for i, b := range bs {
-		bsr[len(bs)-1-i] = b
+	l := len(bs)
+	for i := 0; i < l>>1; i++ {
+		bs[i], bs[l-i-1] = bs[l-i-1], bs[i]
 	}
-	return string(bsr)
+	return string(bs)
 }

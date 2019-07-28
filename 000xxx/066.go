@@ -12,5 +12,8 @@ func plusOne(digits []int) []int {
 	if acc == 0 {
 		return digits
 	}
-	return append([]int{1}, digits...)
+	digits = append(digits, 0)
+	copy(digits[1:], digits)
+	digits[0] = 1
+	return digits
 }

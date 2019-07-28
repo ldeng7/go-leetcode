@@ -4,10 +4,10 @@ func subsets(nums []int) [][]int {
 		l := len(out)
 		for i := 0; i < l; i++ {
 			ar := out[i]
-			arNew := make([]int, len(ar)+1)
-			copy(arNew, ar)
-			arNew[len(ar)] = num
-			out = append(out, arNew)
+			ar1 := make([]int, len(ar)+1)
+			copy(ar1, ar)
+			ar1[len(ar)] = num
+			out = append(out, ar1)
 		}
 	}
 	return out

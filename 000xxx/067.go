@@ -1,28 +1,29 @@
 func addBinary(a string, b string) string {
-	s := ""
+	bs := []byte{}
 	la, lb := len(a)-1, len(b)-1
 	var c byte = 0
 	for la >= 0 || lb >= 0 {
 		var da, db byte = 0, 0
 		if la >= 0 {
-			da = a[la] - '0'
-			la--
+			da, la = a[la]-'0', la-1
 		}
 		if lb >= 0 {
-			db = b[lb] - '0'
-			lb--
+			db, lb = b[lb]-'0', lb-1
 		}
 		d := da + db + c
 		if d&2 == 2 {
-			d &= 1
-			c = 1
+			d, c = d&1, 1
 		} else {
 			c = 0
 		}
-		s = string(d+'0') + s
+		bs = append(bs, d+'0')
 	}
 	if 1 == c {
-		s = "1" + s
+		bs = append(bs, '1')
 	}
-	return s
+	l := len(bs)
+	for i := 0; i < l>>1; i++ {
+		bs[i], bs[l-i-1] = bs[l-i-1], bs[i]
+	}
+	return string(bs)
 }

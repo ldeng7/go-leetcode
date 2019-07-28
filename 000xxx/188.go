@@ -9,8 +9,7 @@ func maxProfit(k int, prices []int) int {
 	n := len(prices)
 	if 0 == n {
 		return 0
-	}
-	if k >= n {
+	} else if k >= n {
 		out := 0
 		for i := 1; i < n; i++ {
 			if prices[i]-prices[i-1] > 0 {

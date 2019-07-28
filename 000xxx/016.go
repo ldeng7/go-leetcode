@@ -1,28 +1,28 @@
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 func threeSumClosest(nums []int, target int) int {
+	o, l, d := 0, len(nums), math.MaxInt64
 	sort.Ints(nums)
-	var diff *int
-	out := 0
-
-	for i := 0; i < len(nums)-2; i++ {
-		j, k := i+1, len(nums)-1
+	for i := 0; i < l-2; i++ {
+		j, k := i+1, l-1
 		for j < k {
-			sum := nums[i] + nums[j] + nums[k]
-			d := sum - target
-			if d < 0 {
-				d = -d
+			s := nums[i] + nums[j] + nums[k]
+			d1 := s - target
+			if d1 < 0 {
+				d1 = -d1
 			}
-			if (nil != diff && d < *diff) || nil == diff {
-				diff = &d
-				out = sum
+			if d1 < d {
+				d, o = d1, s
 			}
-			if sum > target {
+			if s > target {
 				k--
 			} else {
 				j++
 			}
 		}
 	}
-	return out
+	return o
 }

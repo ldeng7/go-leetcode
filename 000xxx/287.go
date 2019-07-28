@@ -1,32 +1,20 @@
 func findDuplicate(nums []int) int {
+	if 0 == len(nums) {
+		return -1
+	}
 	l, r := 1, len(nums)-1
-	for l < r-1 {
-		m := l + (r-l)>>1
-		c := 0
-		for _, num := range nums {
-			if num < l || num > r {
-				continue
-			}
-			if num <= m {
+	for l < r {
+		c, m := 0, l+(r-l)>>1
+		for _, n := range nums {
+			if n <= m {
 				c++
-			} else {
-				c--
 			}
 		}
-		if c > 0 {
+		if c > m {
 			r = m
 		} else {
-			l = m
+			l = m + 1
 		}
 	}
-	c := 0
-	for _, num := range nums {
-		if l == num {
-			c++
-		}
-	}
-	if c > 1 {
-		return l
-	}
-	return r
+	return l
 }

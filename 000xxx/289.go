@@ -9,8 +9,8 @@ func gameOfLife(board [][]int) {
 		for j := 0; j < n; j++ {
 			c := 0
 			for k := 0; k < 8; k++ {
-				x, y := i+dx[k], j+dy[k]
-				if x >= 0 && x < m && y >= 0 && y < n && (board[x][y] == 1 || board[x][y] == 2) {
+				y, x := i+dx[k], j+dy[k]
+				if y >= 0 && y < m && x >= 0 && x < n && (board[y][x] == 1 || board[y][x] == 2) {
 					c++
 				}
 			}

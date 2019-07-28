@@ -23,8 +23,8 @@ var endStateValid = [9]bool{false, true, false, false, true, false, false, true,
 
 func isNumber(s string) bool {
 	st := 0
-	for _, c := range []byte(s) {
-		act := A_INVALID
+	for i := 0; i < len(s); i++ {
+		c, act := s[i], A_INVALID
 		switch c {
 		case ' ':
 			act = A_SPACE

@@ -1,7 +1,7 @@
 func firstMissingPositive(nums []int) int {
 	l := len(nums)
 	for i := 0; i < l; i++ {
-		for nums[i] > 0 && nums[i] <= len(nums) && nums[nums[i]-1] != nums[i] {
+		for nums[i] > 0 && nums[i] <= l && nums[nums[i]-1] != nums[i] {
 			nums[i], nums[nums[i]-1] = nums[nums[i]-1], nums[i]
 		}
 	}
@@ -10,5 +10,5 @@ func firstMissingPositive(nums []int) int {
 			return i + 1
 		}
 	}
-	return len(nums) + 1
+	return l + 1
 }

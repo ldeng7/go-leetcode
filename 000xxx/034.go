@@ -1,31 +1,25 @@
 func searchRange(nums []int, target int) []int {
-	if 0 == len(nums) {
-		return []int{-1, -1}
-	}
-
-	i, j := 0, len(nums)
-	for i < j {
-		h := i + (j-i)>>1
-		if nums[h] >= target {
-			j = h
-		} else {
-			i = h + 1
+	var cal func(int, int) []int
+	cal = func(b, e int) []int {
+		if b >= e {
+			return []int{-1, -1}
 		}
-	}
-	if i == len(nums) || nums[i] != target {
-		return []int{-1, -1}
-	}
-	out := []int{i, 0}
-
-	j = len(nums)
-	for i < j {
-		h := i + (j-i)>>1
-		if nums[h] > target {
-			j = h
-		} else {
-			i = h + 1
+		m := b + (e-b)>>1
+		if nums[m] == target {
+			l, r := m, m
+			for l >= 0 && nums[l] == target {
+				l--
+			}
+			l++
+			for r < len(nums) && nums[r] == target {
+				r++
+			}
+			r--
+			return []int{l, r}
+		} else if nums[m] > target {
+			return cal(b, m)
 		}
+		return cal(m+1, e)
 	}
-	out[1] = i - 1
-	return out
+	return cal(0, len(nums))
 }

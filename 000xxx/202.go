@@ -9,8 +9,7 @@ func isHappy(n int) bool {
 		if m[t] {
 			break
 		}
-		m[t] = true
-		n = t
+		m[t], n = true, t
 	}
 	return n == 1
 }

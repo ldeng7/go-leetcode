@@ -1,8 +1,8 @@
 func isInterleave(s1 string, s2 string, s3 string) bool {
-	if len(s1)+len(s2) != len(s3) {
+	m, n := len(s1), len(s2)
+	if m+n != len(s3) {
 		return false
 	}
-	m, n := len(s1), len(s2)
 	t := make([][]bool, m+1)
 	for i := 0; i <= m; i++ {
 		t[i] = make([]bool, n+1)

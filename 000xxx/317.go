@@ -10,6 +10,8 @@ func copyGrid(grid [][]int) [][]int {
 	return out
 }
 
+var dirs = [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+
 func shortestDistance(grid [][]int) int {
 	if 0 == len(grid) || 0 == len(grid[0]) {
 		return -1
@@ -17,7 +19,6 @@ func shortestDistance(grid [][]int) int {
 	out, v := math.MaxInt64, 0
 	m, n := len(grid), len(grid[0])
 	sum := copyGrid(grid)
-	dirs := [][]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
 			if grid[i][j] != 1 {

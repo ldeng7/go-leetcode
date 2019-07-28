@@ -17,10 +17,8 @@ func (this *TwoSum) Find(value int) bool {
 			if c1 := this.m[n1]; c1 > 0 {
 				return true
 			}
-		} else {
-			if c > 1 {
-				return true
-			}
+		} else if c > 1 {
+			return true
 		}
 	}
 	return false

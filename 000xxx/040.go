@@ -1,31 +1,26 @@
 import "sort"
 
 func combinationSum2(candidates []int, target int) [][]int {
-	out := [][]int{}
+	o, t := [][]int{}, []int{}
 	sort.Ints(candidates)
-	var cal func([]int, int, []int)
-	cal = func(candidates []int, target int, reg []int) {
-		sum := 0
-		for _, num := range reg {
-			sum += num
-			if sum > target {
-				return
-			}
-		}
-		if sum == target {
-			reg1 := make([]int, len(reg))
-			copy(reg1, reg)
-			out = append(out, reg1)
+	var cal func([]int, int)
+	cal = func(cs []int, tar int) {
+		if 0 == tar {
+			t1 := make([]int, len(t))
+			copy(t1, t)
+			o = append(o, t1)
+			return
+		} else if len(cs) == 0 || tar < cs[0] {
 			return
 		}
-		for i, num := range candidates {
-			if i > 0 && candidates[i-1] == candidates[i] {
-				continue
-			}
-			reg1 := append(reg, num)
-			cal(candidates[i+1:], target, reg1)
+		t = append(t, cs[0])
+		cal(cs[1:], tar-cs[0])
+		t = t[:len(t)-1]
+		i := 0
+		for ; i+1 < len(cs) && cs[i] == cs[i+1]; i++ {
 		}
+		cal(cs[i+1:], tar)
 	}
-	cal(candidates, target, []int{})
-	return out
+	cal(candidates, target)
+	return o
 }

@@ -1,20 +1,17 @@
-import "sort"
-
 func groupAnagrams(strs []string) [][]string {
-	out := [][]string{}
-	m := map[string]uint{}
+	o, m := [][]string{}, map[string]int{}
 	for _, s := range strs {
-		bs := []byte(s)
-		sort.Slice(bs, func(i, j int) bool {
-			return bs[i] < bs[j]
-		})
-		h := string(bs)
-		if i, ok := m[h]; ok {
-			out[i] = append(out[i], s)
+		ar := [26]byte{}
+		for i := 0; i < len(s); i++ {
+			ar[s[i]-'a']++
+		}
+		k := string(ar[:])
+		if i, ok := m[k]; ok {
+			o[i] = append(o[i], s)
 		} else {
-			m[h] = uint(len(out))
-			out = append(out, []string{s})
+			o = append(o, []string{s})
+			m[k] = len(o) - 1
 		}
 	}
-	return out
+	return o
 }

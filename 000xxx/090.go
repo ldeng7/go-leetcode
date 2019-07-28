@@ -9,8 +9,7 @@ func subsetsWithDup(nums []int) [][]int {
 	sz, last := 1, nums[0]
 	for _, num := range nums {
 		if num != last {
-			last = num
-			sz = len(out)
+			last, sz = num, len(out)
 		}
 		sz1 := len(out)
 		for i := sz1 - sz; i < sz1; i++ {

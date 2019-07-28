@@ -1,31 +1,24 @@
-var m = map[byte][]string{
-	'2': {"a", "b", "c"},
-	'3': {"d", "e", "f"},
-	'4': {"g", "h", "i"},
-	'5': {"j", "k", "l"},
-	'6': {"m", "n", "o"},
-	'7': {"p", "q", "r", "s"},
-	'8': {"t", "u", "v"},
-	'9': {"w", "x", "y", "z"},
+var m = [9][]string{{"a", "b", "c"}, {"d", "e", "f"}, {"g", "h", "i"}, {"j", "k", "l"},
+	{"m", "n", "o"}, {"p", "q", "r", "s"}, {"t", "u", "v"}, {"w", "x", "y", "z"},
 }
 
 func letterCombinations(digits string) []string {
-	ss := []string{}
+	o := []string{}
 	if 0 == len(digits) {
-		return ss
+		return o
 	}
-	bs := m[digits[0]]
+	bs := m[digits[0]-'2']
 	if 1 == len(digits) {
 		for _, b := range bs {
-			ss = append(ss, b)
+			o = append(o, b)
 		}
-		return ss
+		return o
 	}
 	subs := letterCombinations(digits[1:])
 	for _, b := range bs {
 		for _, s := range subs {
-			ss = append(ss, b+s)
+			o = append(o, b+s)
 		}
 	}
-	return ss
+	return o
 }

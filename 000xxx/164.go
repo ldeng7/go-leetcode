@@ -14,22 +14,22 @@ func maximumGap(nums []int) int {
 		}
 	}
 	sz := (max-min)/len(nums) + 1
-	bucketMin, bucketMax := map[int]int{}, map[int]int{}
+	mMin, mMax := map[int]int{}, map[int]int{}
 
 	for _, n := range nums {
 		k := (n - min) / sz
-		if v, ok := bucketMin[k]; !ok || n < v {
-			bucketMin[k] = n
+		if v, ok := mMin[k]; !ok || n < v {
+			mMin[k] = n
 		}
-		if v, ok := bucketMax[k]; !ok || n > v {
-			bucketMax[k] = n
+		if v, ok := mMax[k]; !ok || n > v {
+			mMax[k] = n
 		}
 	}
 
 	o, pi := 0, 0
 	for i := 1; i < len(nums); i++ {
-		if min, ok := bucketMin[i]; ok {
-			t := min - bucketMax[pi]
+		if min, ok := mMin[i]; ok {
+			t := min - mMax[pi]
 			if t > o {
 				o = t
 			}

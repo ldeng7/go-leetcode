@@ -8,14 +8,11 @@ func countAndSay(n int) string {
 		for i := 0; i < len(out); i++ {
 			var c byte = '1'
 			for i < len(out)-1 && out[i] == out[i+1] {
-				c++
-				i++
+				c, i = c+1, i+1
 			}
-			o = append(o, c)
-			o = append(o, out[i])
+			o = append(o, c, out[i])
 		}
-		n--
-		out = o
+		n, out = n-1, o
 	}
 	return string(out)
 }

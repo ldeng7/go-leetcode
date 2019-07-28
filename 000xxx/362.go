@@ -4,7 +4,7 @@ type HitCounter struct {
 }
 
 func Constructor() HitCounter {
-	return HitCounter{[300]int{}, [300]int{}}
+	return HitCounter{}
 }
 
 func (this *HitCounter) Hit(timestamp int) {
