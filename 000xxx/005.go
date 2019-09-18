@@ -1,35 +1,36 @@
+func min(a, b int) int {
+	if a <= b {
+		return a
+	}
+	return b
+}
+
 func longestPalindrome(s string) string {
 	l := len(s)
-	if 0 == l {
+	if l == 0 {
 		return ""
 	}
-	t, i := make([]byte, l<<1+1), 1
-	t[0] = '#'
-	for j := 0; j < l; j++ {
-		t[i], t[i+1], i = s[j], '#', i+2
-	}
-	l = len(t)
-
-	m, mi := 0, 0
-	for i := 0; i < l; i++ {
-		k := i
-		if k1 := l - i - 1; k1 < k {
-			k = k1
+	rs := make([]int, l<<1+1)
+	c, r, m := -1, -1, 0
+	var o string
+	for i := 0; i < l<<1+1; i++ {
+		if i < r && c<<1-i >= 0 {
+			rs[i] = min(r-i+1, rs[c<<1-i])
+		} else {
+			rs[i] = 1
 		}
-		j := 1
-		for ; j <= k; j++ {
-			if t[i+j] != t[i-j] {
+		for j := rs[i]; j <= i && i+j <= l<<1; j++ {
+			if (i-j)&1 == 0 || s[(i-j)>>1] == s[(i+j)>>1] {
+				rs[i]++
+				c, r = i, i+j
+			} else {
 				break
 			}
 		}
-		if j > m {
-			m, mi = j, i
+		if rs[i] > m {
+			m = rs[i]
+			o = s[(i-rs[i]+1)>>1 : (i+rs[i]-1)>>1]
 		}
 	}
-	if mi&1 == 1 {
-		i = mi/2 + 1 - m/2
-	} else {
-		i = mi/2 - m/2
-	}
-	return s[i : i+m-1]
+	return o
 }

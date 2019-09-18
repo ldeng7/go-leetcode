@@ -1,33 +1,24 @@
-func cal(nums1 []int, nums2 []int, k int) int {
-	l1, l2 := len(nums1), len(nums2)
-	if 0 == l1 {
-		return nums2[k-1]
-	}
-	if 0 == l2 {
-		return nums1[k-1]
-	}
-	if k == 1 {
-		if nums1[0] < nums2[0] {
-			return nums1[0]
-		}
-		return nums2[0]
-	}
-	i, j := k/2, k/2
-	if l1 < i {
-		i = l1
-	}
-	if l2 < j {
-		j = l2
-	}
-	if nums1[i-1] > nums2[j-1] {
-		return cal(nums1, nums2[j:], k-j)
-	} else {
-		return cal(nums1[i:], nums2, k-i)
-	}
-	return 0
-}
-
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-	l1, l2 := len(nums1), len(nums2)
-	return float64(cal(nums1, nums2, (l1+l2+1)/2)+cal(nums1, nums2, (l1+l2+2)/2)) / 2.0
+	ar, i, j, l1, l2 := []int{}, 0, 0, len(nums1), len(nums2)
+	for i < l1 && j < l2 {
+		n1, n2 := nums1[i], nums2[j]
+		if n1 < n2 {
+			ar, i = append(ar, n1), i+1
+		} else if n1 > n2 {
+			ar, j = append(ar, n2), j+1
+		} else {
+			ar, i, j = append(ar, n1, n2), i+1, j+1
+		}
+	}
+	if i < l1 {
+		ar = append(ar, nums1[i:]...)
+	}
+	if j < l2 {
+		ar = append(ar, nums2[j:]...)
+	}
+	l := len(ar)
+	if l&1 == 0 {
+		return float64(ar[l/2-1]+ar[l/2]) / 2.0
+	}
+	return float64(ar[l/2])
 }
