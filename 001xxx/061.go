@@ -26,7 +26,6 @@ func (au *ArrayUnion) GetRoot(i int) int {
 
 func smallestEquivalentString(A string, B string, S string) string {
 	au := (&ArrayUnion{}).Init(26)
-
 	for i := 0; i < len(A); i++ {
 		r1, r2 := au.GetRoot(int(A[i]-'a')), au.GetRoot(int(B[i]-'a'))
 		if r1 > r2 {
