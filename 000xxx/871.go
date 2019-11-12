@@ -1,6 +1,9 @@
+type pqElemType = int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []int
-	lessCb func(a, b int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -34,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -48,21 +51,21 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Push(item int) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() (int, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
 func minRefuelStops(target int, startFuel int, stations [][]int) int {
@@ -76,8 +79,8 @@ func minRefuelStops(target int, startFuel int, stations [][]int) int {
 			if 0 == q.Len() {
 				return -1
 			}
-			f1, _ := q.Pop()
-			f, out = f+f1, out+1
+			f1 := q.Pop()
+			f, out = f+*f1, out+1
 		}
 		q.Push(s[1])
 	}
@@ -85,8 +88,8 @@ func minRefuelStops(target int, startFuel int, stations [][]int) int {
 		if 0 == q.Len() {
 			return -1
 		}
-		f1, _ := q.Pop()
-		f, out = f+f1, out+1
+		f1 := q.Pop()
+		f, out = f+*f1, out+1
 	}
 	return out
 }

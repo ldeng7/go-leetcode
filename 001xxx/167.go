@@ -1,6 +1,4 @@
-import "sort"
-
-type pqElemType = [2]int
+type pqElemType = int
 type pqElemCmpCb = func(pqElemType, pqElemType) bool
 
 type PriorityQueue struct {
@@ -70,24 +68,19 @@ func (pq *PriorityQueue) Pop() *pqElemType {
 	return nil
 }
 
-func advantageCount(A []int, B []int) []int {
-	n := len(A)
-	l, r := 0, n-1
-	sort.Ints(A)
-	out := make([]int, n)
-	q := (&PriorityQueue{}).Init(nil, func(a, b [2]int) bool {
-		return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1])
+func connectSticks(sticks []int) int {
+	q := (&PriorityQueue{}).Init(sticks, func(a, b int) bool {
+		return a < b
 	})
-	for i, b := range B {
-		q.Push([2]int{b, i})
-	}
+	o, c := 0, 0
 	for 0 != q.Len() {
-		t := q.Pop()
-		if A[r] > (*t)[0] {
-			out[t[1]], r = A[r], r-1
-		} else {
-			out[t[1]], l = A[l], l+1
+		c = *(q.Pop())
+		if 0 == q.Len() {
+			break
 		}
+		c += *(q.Pop())
+		q.Push(c)
+		o += c
 	}
-	return out
+	return o
 }

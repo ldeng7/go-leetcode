@@ -1,6 +1,9 @@
+type pqElemType = int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []int
-	lessCb func(a, b int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -34,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -48,19 +51,20 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Top() (int, bool) {
+func (pq *PriorityQueue) Top() *pqElemType {
 	if len(pq.arr) != 0 {
-		return pq.arr[0], true
+		e := pq.arr[0]
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
-func (pq *PriorityQueue) Push(item int) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Set(index, item int) {
+func (pq *PriorityQueue) Set(index int, item pqElemType) {
 	pq.arr[index] = item
 	if !pq.down(index, len(pq.arr)) {
 		pq.up(index)
@@ -79,7 +83,7 @@ func Constructor(k int, nums []int) KthLargest {
 	}
 	(&this.q).Init(nums[:k], func(a, b int) bool { return a < b })
 	for _, n := range nums[k:] {
-		if t, _ := this.q.Top(); n > t {
+		if t := this.q.Top(); n > *t {
 			this.q.Set(0, n)
 		}
 	}
@@ -88,12 +92,11 @@ func Constructor(k int, nums []int) KthLargest {
 
 func (this *KthLargest) Add(val int) int {
 	if this.q.Len() == this.k {
-		if t, _ := this.q.Top(); val > t {
+		if t := this.q.Top(); val > *t {
 			this.q.Set(0, val)
 		}
 	} else {
 		this.q.Push(val)
 	}
-	t, _ := this.q.Top()
-	return t
+	return *(this.q.Top())
 }

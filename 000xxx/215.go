@@ -1,6 +1,9 @@
+type pqElemType = int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []int
-	lessCb func(a, b int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -34,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -44,14 +47,15 @@ func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQu
 	return pq
 }
 
-func (pq *PriorityQueue) Top() (int, bool) {
+func (pq *PriorityQueue) Top() *pqElemType {
 	if len(pq.arr) != 0 {
-		return pq.arr[0], true
+		e := pq.arr[0]
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
-func (pq *PriorityQueue) Set(index, item int) {
+func (pq *PriorityQueue) Set(index int, item pqElemType) {
 	pq.arr[index] = item
 	if !pq.down(index, len(pq.arr)) {
 		pq.up(index)
@@ -61,10 +65,9 @@ func (pq *PriorityQueue) Set(index, item int) {
 func findKthLargest(nums []int, k int) int {
 	q := (&PriorityQueue{}).Init(nums[:k], func(a, b int) bool { return a < b })
 	for _, n := range nums[k:] {
-		if t, _ := q.Top(); n > t {
+		if t := q.Top(); n > *t {
 			q.Set(0, n)
 		}
 	}
-	t, _ := q.Top()
-	return t
+	return *(q.Top())
 }

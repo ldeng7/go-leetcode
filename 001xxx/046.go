@@ -1,6 +1,9 @@
+type pqElemType = int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []int
-	lessCb func(a, b int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -34,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -48,35 +51,35 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Push(item int) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() (int, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
 func lastStoneWeight(stones []int) int {
 	q := (&PriorityQueue{}).Init(stones, func(a, b int) bool { return a > b })
 	for q.Len() > 1 {
-		a, _ := q.Pop()
-		b, _ := q.Pop()
-		d := a - b
+		a := q.Pop()
+		b := q.Pop()
+		d := *a - *b
 		if 0 != d {
 			q.Push(d)
 		}
 	}
-	if a, ok := q.Pop(); ok {
-		return a
+	if a := q.Pop(); nil != a {
+		return *a
 	}
 	return 0
 }

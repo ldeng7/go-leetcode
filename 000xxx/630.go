@@ -1,8 +1,11 @@
 import "sort"
 
+type pqElemType = int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []int
-	lessCb func(a, b int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -36,7 +39,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []int, lessCb func(int, int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -50,21 +53,21 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Push(item int) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() (int, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
 func scheduleCourse(courses [][]int) int {
@@ -77,8 +80,7 @@ func scheduleCourse(courses [][]int) int {
 		cur += c[0]
 		q.Push(c[0])
 		if cur > c[1] {
-			t, _ := q.Pop()
-			cur -= t
+			cur -= *(q.Pop())
 		}
 	}
 	return q.Len()

@@ -1,6 +1,9 @@
+type pqElemType = [2]int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    [][2]int
-	lessCb func(a, b [2]int) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -34,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr [][2]int, lessCb func([2]int, [2]int) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -48,28 +51,29 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Top() ([2]int, bool) {
+func (pq *PriorityQueue) Top() *pqElemType {
 	if len(pq.arr) != 0 {
-		return pq.arr[0], true
+		e := pq.arr[0]
+		return &e
 	}
-	return [2]int{}, false
+	return nil
 }
 
-func (pq *PriorityQueue) Push(item [2]int) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() ([2]int, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return [2]int{}, false
+	return nil
 }
 
 func maxSlidingWindow(nums []int, k int) []int {
@@ -79,15 +83,15 @@ func maxSlidingWindow(nums []int, k int) []int {
 	})
 	for i, _ := range nums {
 		for {
-			if p, ok := q.Top(); !ok || p[1] > i-k {
+			if p := q.Top(); nil == p || (*p)[1] > i-k {
 				break
 			}
 			q.Pop()
 		}
 		q.Push([2]int{nums[i], i})
 		if i >= k-1 {
-			p, _ := q.Top()
-			out = append(out, p[0])
+			p := q.Top()
+			out = append(out, (*p)[0])
 		}
 	}
 	return out

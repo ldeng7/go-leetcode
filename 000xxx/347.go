@@ -1,7 +1,9 @@
-type elemType = [2]int
+type pqElemType = [2]int
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []elemType
-	lessCb func(a, b elemType) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -35,7 +37,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []elemType, lessCb func(elemType, elemType) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -45,26 +47,26 @@ func (pq *PriorityQueue) Init(arr []elemType, lessCb func(elemType, elemType) bo
 	return pq
 }
 
-func (pq *PriorityQueue) Push(item elemType) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() (elemType, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return [2]int{}, false
+	return nil
 }
 
 func topKFrequent(nums []int, k int) []int {
 	m := map[int]int{}
-	q := (&PriorityQueue{}).Init(nil, func(a, b elemType) bool {
+	q := (&PriorityQueue{}).Init(nil, func(a, b [2]int) bool {
 		return a[0] > b[0] || (a[0] == b[0] && a[1] > b[1])
 	})
 	o := []int{}
@@ -75,8 +77,8 @@ func topKFrequent(nums []int, k int) []int {
 		q.Push([2]int{c, n})
 	}
 	for i := 0; i < k; i++ {
-		p, _ := q.Pop()
-		o = append(o, p[1])
+		p := q.Pop()
+		o = append(o, (*p)[1])
 	}
 	return o
 }

@@ -3,9 +3,12 @@ import (
 	"sort"
 )
 
+type pqElemType = float64
+type pqElemCmpCb = func(pqElemType, pqElemType) bool
+
 type PriorityQueue struct {
-	arr    []float64
-	lessCb func(a, b float64) bool
+	arr    []pqElemType
+	lessCb pqElemCmpCb
 }
 
 func (pq *PriorityQueue) up(j int) {
@@ -39,7 +42,7 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []float64, lessCb func(float64, float64) bool) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
 	l := len(pq.arr)
@@ -53,21 +56,21 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Push(item float64) {
+func (pq *PriorityQueue) Push(item pqElemType) {
 	pq.arr = append(pq.arr, item)
 	pq.up(len(pq.arr) - 1)
 }
 
-func (pq *PriorityQueue) Pop() (float64, bool) {
+func (pq *PriorityQueue) Pop() *pqElemType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
 		pq.down(0, i)
-		v := pq.arr[i]
+		e := pq.arr[i]
 		pq.arr = pq.arr[:i]
-		return v, true
+		return &e
 	}
-	return 0, false
+	return nil
 }
 
 func mincostToHireWorkers(quality []int, wage []int, K int) float64 {
@@ -85,8 +88,7 @@ func mincostToHireWorkers(quality []int, wage []int, K int) float64 {
 		s += p[1]
 		q.Push(-p[1])
 		if q.Len() > K {
-			qu, _ := q.Pop()
-			s += qu
+			s += *(q.Pop())
 		}
 		if q.Len() == K {
 			t := s * p[0]
