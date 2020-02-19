@@ -12,10 +12,6 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 	return au
 }
 
-func (au *ArrayUnion) Set(i, v int) {
-	au.arr[i] = v
-}
-
 func (au *ArrayUnion) GetRoot(i int) int {
 	for {
 		r := au.arr[i]
@@ -26,13 +22,20 @@ func (au *ArrayUnion) GetRoot(i int) int {
 	}
 }
 
+func (au *ArrayUnion) Union(a, b int) bool {
+	ra, rb := au.GetRoot(a), au.GetRoot(b)
+	if ra == rb {
+		return false
+	}
+	au.arr[ra] = rb
+	return true
+}
+
 func earliestAcq(logs [][]int, N int) int {
 	sort.Slice(logs, func(i, j int) bool { return logs[i][0] < logs[j][0] })
 	au := (&ArrayUnion{}).Init(N)
 	for _, log := range logs {
-		r1, r2 := au.GetRoot(log[1]), au.GetRoot(log[2])
-		if r1 != r2 {
-			au.Set(r2, r1)
+		if au.Union(log[2], log[1]) {
 			N--
 		}
 		if 1 == N {

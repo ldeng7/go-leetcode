@@ -28,6 +28,15 @@ func (au *ArrayUnion) GetRoot(i int) int {
 	}
 }
 
+func (au *ArrayUnion) Union(a, b int) bool {
+	ra, rb := au.GetRoot(a), au.GetRoot(b)
+	if ra == rb {
+		return false
+	}
+	au.arr[ra] = rb
+	return true
+}
+
 func findRedundantDirectedConnection(edges [][]int) []int {
 	l := len(edges)
 	au := (&ArrayUnion{}).Init(l + 1)
@@ -48,14 +57,12 @@ func findRedundantDirectedConnection(edges [][]int) []int {
 		if edge[1] == 0 {
 			continue
 		}
-		r1, r2 := au.GetRoot(edge[0]), au.GetRoot(edge[1])
-		if r1 == r2 {
+		if !au.Union(edge[0], edge[1]) {
 			if 0 == len(first) {
 				return edge
 			}
 			return first
 		}
-		au.Set(r1, r2)
 	}
 	return second
 }

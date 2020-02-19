@@ -12,10 +12,6 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 	return au
 }
 
-func (au *ArrayUnion) Set(i, v int) {
-	au.arr[i] = v
-}
-
 func (au *ArrayUnion) GetRoot(i int) int {
 	for {
 		r := au.arr[i]
@@ -26,6 +22,15 @@ func (au *ArrayUnion) GetRoot(i int) int {
 	}
 }
 
+func (au *ArrayUnion) Union(a, b int) bool {
+	ra, rb := au.GetRoot(a), au.GetRoot(b)
+	if ra == rb {
+		return false
+	}
+	au.arr[ra] = rb
+	return true
+}
+
 func minimumCost(N int, connections [][]int) int {
 	au := (&ArrayUnion{}).Init(N + 1)
 	sort.Slice(connections, func(i, j int) bool {
@@ -34,13 +39,11 @@ func minimumCost(N int, connections [][]int) int {
 
 	o, c := 0, 0
 	for _, conn := range connections {
-		r1, r2 := au.GetRoot(conn[0]), au.GetRoot(conn[1])
-		if r1 != r2 {
+		if au.Union(conn[0], conn[1]) {
 			o, c = o+conn[2], c+1
 			if c == N-1 {
 				return o
 			}
-			au.Set(r1, r2)
 		}
 	}
 	return -1

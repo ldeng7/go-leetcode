@@ -28,6 +28,15 @@ func (au *ArrayUnion) GetRoot(i int) int {
 	}
 }
 
+func (au *ArrayUnion) Union(a, b int) bool {
+	ra, rb := au.GetRoot(a), au.GetRoot(b)
+	if ra == rb {
+		return false
+	}
+	au.arr[ra] = rb
+	return true
+}
+
 func numIslands2(m int, n int, positions [][]int) []int {
 	out := []int{}
 	c := 0
@@ -39,9 +48,7 @@ func numIslands2(m int, n int, positions [][]int) []int {
 		if y < 0 || y >= m || x < 0 || x >= n || au.Get(j) == -1 {
 			return
 		}
-		r, r1 := au.GetRoot(i), au.GetRoot(j)
-		if r != r1 {
-			au.Set(r1, r)
+		if au.Union(j, i) {
 			c--
 		}
 	}

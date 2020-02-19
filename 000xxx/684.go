@@ -10,10 +10,6 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 	return au
 }
 
-func (au *ArrayUnion) Set(i, v int) {
-	au.arr[i] = v
-}
-
 func (au *ArrayUnion) GetRoot(i int) int {
 	for {
 		r := au.arr[i]
@@ -24,14 +20,21 @@ func (au *ArrayUnion) GetRoot(i int) int {
 	}
 }
 
+func (au *ArrayUnion) Union(a, b int) bool {
+	ra, rb := au.GetRoot(a), au.GetRoot(b)
+	if ra == rb {
+		return false
+	}
+	au.arr[ra] = rb
+	return true
+}
+
 func findRedundantConnection(edges [][]int) []int {
 	au := (&ArrayUnion{}).Init(2001)
 	for _, e := range edges {
-		r1, r2 := au.GetRoot(e[0]), au.GetRoot(e[1])
-		if r1 == r2 {
+		if !au.Union(e[0], e[1]) {
 			return e
 		}
-		au.Set(r1, r2)
 	}
 	return []int{}
 }

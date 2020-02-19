@@ -29,13 +29,23 @@ func (au *ArrayUnion) Union(a, b int) bool {
 	return true
 }
 
-func countComponents(n int, edges [][]int) int {
-	o := n
-	au := (&ArrayUnion{}).Init(n)
-	for _, e := range edges {
-		if au.Union(e[1], e[0]) {
-			o--
+func (au *ArrayUnion) CountRoot() int {
+	o := 0
+	for i, r := range au.arr {
+		if r == i || r == -1 {
+			o++
 		}
 	}
 	return o
+}
+
+func makeConnected(n int, connections [][]int) int {
+	if n > len(connections)+1 {
+		return -1
+	}
+	au := (&ArrayUnion{}).Init(n)
+	for _, c := range connections {
+		au.Union(c[0], c[1])
+	}
+	return au.CountRoot() - 1
 }
