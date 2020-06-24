@@ -22,7 +22,7 @@ func (oa *OrderedArray) Init(arr []oaElemType, lessCb, eqCb oaElemCmpCb) *Ordere
 func (oa *OrderedArray) LowerBound(item oaElemType) int {
 	i, j := 0, len(oa.arr)
 	for i < j {
-		h := int(uint(i+j) >> 1)
+		h := i + (j-i)>>1
 		if oa.lessCb(oa.arr[h], item) {
 			i = h + 1
 		} else {

@@ -1,34 +1,43 @@
+func min(a, b int) int {
+	if a >= b {
+		return b
+	}
+	return a
+}
+
+func max(a, b int) int {
+	if a <= b {
+		return b
+	}
+	return a
+}
+
+func enc(s, e int) uint64 {
+	return (uint64(s) << 32) | uint64(e)
+}
+func dec(k uint64) (int, int) {
+	return int(k >> 32), int(k & 0xffffffff)
+}
+
 type MyCalendarTwo struct {
-	l1 map[complex128]bool
-	l2 map[complex128]bool
+	calendar, overlap []uint64
 }
 
 func Constructor() MyCalendarTwo {
-	return MyCalendarTwo{map[complex128]bool{}, map[complex128]bool{}}
+	return MyCalendarTwo{make([]uint64, 0, 64), make([]uint64, 0, 64)}
 }
 
 func (this *MyCalendarTwo) Book(start int, end int) bool {
-	s, e := float64(start), float64(end)
-	for c, _ := range this.l2 {
-		if s >= imag(c) || e <= real(c) {
-			continue
+	for _, k := range this.overlap {
+		if s, e := dec(k); start < e && end > s {
+			return false
 		}
-		return false
 	}
-	for c, _ := range this.l1 {
-		if s >= imag(c) || e <= real(c) {
-			continue
+	for _, k := range this.calendar {
+		if s, e := dec(k); start < e && end > s {
+			this.overlap = append(this.overlap, enc(max(start, s), min(end, e)))
 		}
-		sn := s
-		if real(c) > s {
-			sn = real(c)
-		}
-		en := e
-		if imag(c) < e {
-			en = imag(c)
-		}
-		this.l2[complex(sn, en)] = true
 	}
-	this.l1[complex(s, e)] = true
+	this.calendar = append(this.calendar, enc(start, end))
 	return true
 }

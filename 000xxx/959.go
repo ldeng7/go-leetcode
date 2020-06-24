@@ -14,6 +14,10 @@ func (au *ArrayUnion) Get(i int) int {
 	return au.arr[i]
 }
 
+func (au *ArrayUnion) Set(i, v int) {
+	au.arr[i] = v
+}
+
 func (au *ArrayUnion) GetRoot(i int) int {
 	for {
 		r := au.arr[i]
@@ -22,10 +26,6 @@ func (au *ArrayUnion) GetRoot(i int) int {
 		}
 		i = r
 	}
-}
-
-func (au *ArrayUnion) SetRoot(i, v int) {
-	au.arr[i] = au.GetRoot(v)
 }
 
 func regionsBySlashes(grid []string) int {
@@ -37,21 +37,22 @@ func regionsBySlashes(grid []string) int {
 			b := (i*l + j) << 2
 			switch grid[i][j] {
 			case '/':
-				au.SetRoot(au.GetRoot(b), b+3)
-				au.SetRoot(au.GetRoot(b+1), b+2)
+				au.Set(au.GetRoot(b), au.GetRoot(b+3))
+				au.Set(au.GetRoot(b+1), au.GetRoot(b+2))
 			case '\\':
-				au.SetRoot(au.GetRoot(b), b+1)
-				au.SetRoot(au.GetRoot(b+2), b+3)
+				au.Set(au.GetRoot(b), au.GetRoot(b+1))
+				au.Set(au.GetRoot(b+2), au.GetRoot(b+3))
 			case ' ':
-				au.SetRoot(au.GetRoot(b), b+1)
-				au.SetRoot(au.GetRoot(b+1), b+2)
-				au.SetRoot(au.GetRoot(b+2), b+3)
+				r1, r2 := au.GetRoot(b+1), au.GetRoot(b+2)
+				au.Set(au.GetRoot(b), r1)
+				au.Set(r1, r2)
+				au.Set(r2, au.GetRoot(b+3))
 			}
 			if i > 0 {
-				au.SetRoot(au.GetRoot(b), b-(l<<2)+2)
+				au.Set(au.GetRoot(b), au.GetRoot(b-(l<<2)+2))
 			}
 			if j > 0 {
-				au.SetRoot(au.GetRoot(b+3), b-3)
+				au.Set(au.GetRoot(b+3), au.GetRoot(b-3))
 			}
 		}
 	}
