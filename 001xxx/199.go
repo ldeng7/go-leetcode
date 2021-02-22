@@ -1,19 +1,19 @@
-type pqElemType = int
-type pqElemLessCb = func(pqElemType, pqElemType) bool
+type pqValType = int
+type pqValCmpCb = func(pqValType, pqValType) bool
 
 type PriorityQueue struct {
-	arr    []pqElemType
-	lessCb pqElemLessCb
+	arr    []pqValType
+	lessCb pqValCmpCb
 }
 
-func (pq *PriorityQueue) up(j int) {
+func (pq *PriorityQueue) up(i int) {
 	for {
-		i := (j - 1) / 2
-		if i == j || !pq.lessCb(pq.arr[j], pq.arr[i]) {
+		j := (i - 1) / 2
+		if j == i || !pq.lessCb(pq.arr[i], pq.arr[j]) {
 			break
 		}
-		pq.arr[i], pq.arr[j] = pq.arr[j], pq.arr[i]
-		j = i
+		pq.arr[j], pq.arr[i] = pq.arr[i], pq.arr[j]
+		i = j
 	}
 }
 
@@ -37,12 +37,14 @@ func (pq *PriorityQueue) down(i0, n int) bool {
 	return i > i0
 }
 
-func (pq *PriorityQueue) Init(arr []pqElemType, lessCb pqElemLessCb) *PriorityQueue {
+func (pq *PriorityQueue) Init(arr []pqValType, sorted bool, lessCb pqValCmpCb) *PriorityQueue {
 	pq.arr = arr
 	pq.lessCb = lessCb
-	l := len(pq.arr)
-	for i := l>>1 - 1; i >= 0; i-- {
-		pq.down(i, l)
+	if !sorted {
+		l := len(pq.arr)
+		for i := l>>1 - 1; i >= 0; i-- {
+			pq.down(i, l)
+		}
 	}
 	return pq
 }
@@ -51,12 +53,15 @@ func (pq *PriorityQueue) Len() int {
 	return len(pq.arr)
 }
 
-func (pq *PriorityQueue) Push(item pqElemType) {
-	pq.arr = append(pq.arr, item)
-	pq.up(len(pq.arr) - 1)
+func (pq *PriorityQueue) Top() *pqValType {
+	if len(pq.arr) != 0 {
+		e := pq.arr[0]
+		return &e
+	}
+	return nil
 }
 
-func (pq *PriorityQueue) Pop() *pqElemType {
+func (pq *PriorityQueue) Pop() *pqValType {
 	i := len(pq.arr) - 1
 	if i >= 0 {
 		pq.arr[0], pq.arr[i] = pq.arr[i], pq.arr[0]
@@ -68,12 +73,19 @@ func (pq *PriorityQueue) Pop() *pqElemType {
 	return nil
 }
 
+func (pq *PriorityQueue) Set(index int, val pqValType) {
+	pq.arr[index] = val
+	if !pq.down(index, len(pq.arr)) {
+		pq.up(index)
+	}
+}
+
 func minBuildTime(blocks []int, split int) int {
-	q := (&PriorityQueue{}).Init(blocks, func(a, b int) bool { return a < b })
+	q := (&PriorityQueue{}).Init(blocks, false, func(a, b int) bool { return a < b })
 	for q.Len() > 1 {
 		q.Pop()
-		t := q.Pop()
-		q.Push(split + *t)
+		t := q.Top()
+		q.Set(0, split+*t)
 	}
 	return *q.Pop()
 }

@@ -1,10 +1,14 @@
-import "sort"
-
 func arrayPairSum(nums []int) int {
-	sort.Ints(nums)
-	sum := 0
-	for i := 0; i < len(nums); i += 2 {
-		sum += nums[i]
+	cs := [20001]int{}
+	for _, n := range nums {
+		cs[n+10000]++
 	}
-	return sum
+	o, d := 0, 1
+	for i := 0; i <= 20000; i++ {
+		if c := cs[i]; c != 0 {
+			o += (i - 10000) * ((c + d) >> 1)
+			d = (d ^ c) & 1
+		}
+	}
+	return o
 }

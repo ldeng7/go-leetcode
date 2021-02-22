@@ -6,24 +6,24 @@ type ArrayUnion struct {
 
 func (au *ArrayUnion) Init(l int) *ArrayUnion {
 	au.arr = make([]int, l)
-	for y := 0; y < l; y++ {
-		au.arr[y] = -1
+	for i := 0; i < l; i++ {
+		au.arr[i] = -1
 	}
 	return au
 }
 
-func (au *ArrayUnion) Set(y, v int) {
-	au.arr[y] = v
+func (au *ArrayUnion) Set(i, v int) {
+	au.arr[i] = v
 }
 
-func (au *ArrayUnion) GetRoot(y int) int {
-	for {
-		r := au.arr[y]
-		if r == y || r == -1 {
-			return y
-		}
-		y = r
+func (au *ArrayUnion) GetRoot(i int) int {
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
 func min(a, b int) int {

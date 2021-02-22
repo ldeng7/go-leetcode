@@ -11,22 +11,22 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 }
 
 func (au *ArrayUnion) GetRoot(i int) int {
-	for {
-		r := au.arr[i]
-		if r == i || r == -1 {
-			return i
-		}
-		i = r
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
-func (au *ArrayUnion) Union(a, b int) bool {
-	ra, rb := au.GetRoot(a), au.GetRoot(b)
-	if ra == rb {
-		return false
+func (au *ArrayUnion) Merge(i, j int) bool {
+	r1, r2 := au.GetRoot(i), au.GetRoot(j)
+	if r1 != r2 {
+		au.arr[r1] = r2
+		return true
 	}
-	au.arr[ra] = rb
-	return true
+	return false
 }
 
 func findCircleNum(M [][]int) int {
@@ -35,7 +35,7 @@ func findCircleNum(M [][]int) int {
 	au := (&ArrayUnion{}).Init(l)
 	for i := 0; i < l; i++ {
 		for j := i + 1; j < l; j++ {
-			if M[i][j] == 1 && au.Union(j, i) {
+			if M[i][j] == 1 && au.Merge(j, i) {
 				o--
 			}
 		}

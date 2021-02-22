@@ -15,13 +15,13 @@ func (au *ArrayUnion) Set(i, v int) {
 }
 
 func (au *ArrayUnion) GetRoot(i int) int {
-	for {
-		r := au.arr[i]
-		if r == i || r == -1 {
-			return i
-		}
-		i = r
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
 func smallestEquivalentString(A string, B string, S string) string {

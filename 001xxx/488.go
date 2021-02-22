@@ -1,110 +1,69 @@
-import "sort"
-
-type oaElemType = int
-type oaElemCmpCb = func(oaElemType, oaElemType) bool
-
-type OrderedArray struct {
-	arr    []oaElemType
-	lessCb oaElemCmpCb
-	eqCb   oaElemCmpCb
+type ArrayUnion struct {
+	arr []int
 }
 
-func (oa *OrderedArray) Init(arr []oaElemType, lessCb, eqCb oaElemCmpCb) *OrderedArray {
-	oa.arr = arr
-	if len(arr) > 1 {
-		sort.Slice(arr, func(i, j int) bool { return lessCb(arr[i], arr[j]) })
+func (au *ArrayUnion) Init(l int) *ArrayUnion {
+	au.arr = make([]int, l)
+	for i := 0; i < l; i++ {
+		au.arr[i] = -1
 	}
-	oa.lessCb = lessCb
-	oa.eqCb = eqCb
-	return oa
+	return au
 }
 
-func (oa *OrderedArray) Len() int {
-	return len(oa.arr)
+func (au *ArrayUnion) Set(i, v int) {
+	au.arr[i] = v
 }
 
-func (oa *OrderedArray) Get(index int) oaElemType {
-	return oa.arr[index]
-}
-
-func (oa *OrderedArray) LowerBound(item oaElemType) int {
-	i, j := 0, len(oa.arr)
-	for i < j {
-		h := i + (j-i)>>1
-		if oa.lessCb(oa.arr[h], item) {
-			i = h + 1
-		} else {
-			j = h
-		}
+func (au *ArrayUnion) GetRoot(i int) int {
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
-	return i
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
-func (oa *OrderedArray) UpperBound(item oaElemType) int {
-	i, j := 0, len(oa.arr)
-	for i < j {
-		h := i + (j-i)>>1
-		if !oa.lessCb(item, oa.arr[h]) {
-			i = h + 1
-		} else {
-			j = h
-		}
-	}
-	return i
-}
-
-func (oa *OrderedArray) Add(item oaElemType) {
-	i := oa.LowerBound(item)
-	if i != len(oa.arr) {
-		oa.arr = append(oa.arr, 0)
-		copy(oa.arr[i+1:], oa.arr[i:])
-		oa.arr[i] = item
-	} else {
-		oa.arr = append(oa.arr, item)
-	}
-}
-
-func (oa *OrderedArray) RemoveAt(index int) {
-	if index != len(oa.arr)-1 {
-		copy(oa.arr[index:], oa.arr[index+1:])
-	}
-	oa.arr = oa.arr[:len(oa.arr)-1]
+func (au *ArrayUnion) Get(i int) int {
+	return au.arr[i]
 }
 
 func avoidFlood(rains []int) []int {
-	l, n := len(rains), 0
-	o := make([]int, l)
-	for i, r := range rains {
-		o[i] = -1
-		if r == 0 {
-			n++
-		}
-	}
+	l := len(rains)
+	o, ar := make([]int, l), make([]int, l)
 	m := map[int]int{}
-	oa := (&OrderedArray{}).Init(make([]int, 0, n),
-		func(a, b int) bool { return a < b },
-		func(a, b int) bool { return a == b },
-	)
+	au := (&ArrayUnion{}).Init(l)
 
 	for i, r := range rains {
 		if r == 0 {
-			oa.Add(i)
-		} else if j, ok := m[r]; !ok {
-			m[r] = i
-		} else {
-			if oa.Len() == 0 {
-				return nil
+			o[i] = 1
+			if i != 0 && rains[i-1] > 0 {
+				ar[au.GetRoot(i-1)] = i
 			}
-			k := oa.UpperBound(j)
-			if k == oa.Len() {
-				return nil
-			}
-			o[oa.Get(k)], m[r] = r, i
-			oa.RemoveAt(k)
+			continue
 		}
-	}
-	for i := 0; i < oa.Len(); i++ {
-		o[oa.Get(i)] = 1
+
+		if i != 0 && rains[i-1] > 0 {
+			au.Set(i, au.Get(i-1))
+		} else {
+			au.Set(i, i)
+			ar[i] = 100001
+		}
+
+		if v, ok := m[r]; ok {
+			rt := au.GetRoot(v)
+			j := ar[rt]
+			if j >= i {
+				return []int{}
+			}
+			o[j] = r
+			j++
+			ar[rt] = j
+			if j < l && rains[j] > 0 {
+				au.Set(rt, au.GetRoot(j))
+			}
+		}
+		o[i], m[r] = -1, i
 	}
 	return o
 }

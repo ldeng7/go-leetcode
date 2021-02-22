@@ -13,29 +13,29 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 }
 
 func (au *ArrayUnion) GetRoot(i int) int {
-	for {
-		r := au.arr[i]
-		if r == i || r == -1 {
-			return i
-		}
-		i = r
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
-func (au *ArrayUnion) Union(a, b int) bool {
-	ra, rb := au.GetRoot(a), au.GetRoot(b)
-	if ra == rb {
-		return false
+func (au *ArrayUnion) Merge(i, j int) bool {
+	r1, r2 := au.GetRoot(i), au.GetRoot(j)
+	if r1 != r2 {
+		au.arr[r1] = r2
+		return true
 	}
-	au.arr[ra] = rb
-	return true
+	return false
 }
 
 func smallestStringWithSwaps(s string, pairs [][]int) string {
 	o, l := []byte(s), len(s)
 	au := (&ArrayUnion{}).Init(l)
 	for _, p := range pairs {
-		au.Union(p[0], p[1])
+		au.Merge(p[0], p[1])
 	}
 	g := map[int][]int{}
 	for i := 0; i < l; i++ {

@@ -6,35 +6,25 @@ func min(a, b int) int {
 }
 
 func largest1BorderedSquare(grid [][]int) int {
-	o, m, n := 0, len(grid), len(grid[0])
-	h, v := make([][]int, m), make([][]int, m)
-	for i := 0; i < m; i++ {
-		h[i], v[i] = make([]int, n), make([]int, n)
+	m, n := len(grid), len(grid[0])
+	h, v := [101][101]int{}, [101][101]int{}
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if grid[i-1][j-1] == 1 {
+				h[i][j] = h[i][j-1] + 1
+				v[i][j] = v[i-1][j] + 1
+			}
+		}
 	}
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 {
-				if 0 != j {
-					h[i][j] = h[i][j-1] + 1
-				} else {
-					h[i][j] = 1
-				}
-				if 0 != i {
-					v[i][j] = v[i-1][j] + 1
-				} else {
-					v[i][j] = 1
+
+	for k := min(m, n); k > 0; k-- {
+		for i := 1; i+k-1 <= m; i++ {
+			for j := 1; j+k-1 <= n; j++ {
+				if v[i+k-1][j] >= k && v[i+k-1][j+k-1] >= k && h[i][j+k-1] >= k && h[i+k-1][j+k-1] >= k {
+					return k * k
 				}
 			}
 		}
 	}
-	for i := m - 1; i >= 0; i-- {
-		for j := n - 1; j >= 0; j-- {
-			for k := min(h[i][j], v[i][j]); k > o; k-- {
-				if v[i][j-k+1] >= k && h[i-k+1][j] >= k {
-					o = k
-				}
-			}
-		}
-	}
-	return o * o
+	return 0
 }

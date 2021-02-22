@@ -1,10 +1,3 @@
-func min(a, b int) int {
-	if a <= b {
-		return a
-	}
-	return b
-}
-
 func max(a, b int) int {
 	if a >= b {
 		return a
@@ -13,30 +6,27 @@ func max(a, b int) int {
 }
 
 func longestSubarray(nums []int, limit int) int {
+	ma, mi := make([]int, 0, 16), make([]int, 0, 16)
 	o, l := 0, len(nums)
-	if l == 1 {
-		return 1
-	}
-	for i, n := range nums {
-		nMin, nMax := n, n
-		iMin, iMax := i, i
-		for j := i + 1; j < l; j++ {
-			m := nums[j]
-			if m <= nMin {
-				nMin, iMin = m, j
+	for i, j := 0, 0; i < l; i++ {
+		n := nums[i]
+		for len(ma) > 0 && n > ma[len(ma)-1] {
+			ma = ma[:len(ma)-1]
+		}
+		for len(mi) > 0 && n < mi[len(mi)-1] {
+			mi = mi[:len(mi)-1]
+		}
+		ma = append(ma, n)
+		mi = append(mi, n)
+		for ; j < l && ma[0]-mi[0] > limit; j++ {
+			if nums[j] == ma[0] {
+				ma = ma[1:]
 			}
-			if m >= nMax {
-				nMax, iMax = m, j
-			}
-			if nMax-nMin > limit {
-				o, i = max(o, j-i), min(iMax, iMin)
-				break
-			}
-			o = max(o, j-i+1)
-			if o == l-i {
-				return o
+			if nums[j] == mi[0] {
+				mi = mi[1:]
 			}
 		}
+		o = max(o, i-j+1)
 	}
 	return o
 }

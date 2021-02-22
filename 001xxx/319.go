@@ -11,32 +11,26 @@ func (au *ArrayUnion) Init(l int) *ArrayUnion {
 }
 
 func (au *ArrayUnion) GetRoot(i int) int {
-	for {
-		r := au.arr[i]
-		if r == i || r == -1 {
-			return i
-		}
-		i = r
+	r := au.arr[i]
+	if r == -1 || r == i {
+		return i
 	}
+	r = au.GetRoot(r)
+	au.arr[i] = r
+	return r
 }
 
-func (au *ArrayUnion) Union(a, b int) bool {
-	ra, rb := au.GetRoot(a), au.GetRoot(b)
-	if ra == rb {
-		return false
-	}
-	au.arr[ra] = rb
-	return true
+func (au *ArrayUnion) Get(i int) int {
+	return au.arr[i]
 }
 
-func (au *ArrayUnion) CountRoot() int {
-	o := 0
-	for i, r := range au.arr {
-		if r == i || r == -1 {
-			o++
-		}
+func (au *ArrayUnion) Merge(i, j int) bool {
+	r1, r2 := au.GetRoot(i), au.GetRoot(j)
+	if r1 != r2 {
+		au.arr[r1] = r2
+		return true
 	}
-	return o
+	return false
 }
 
 func makeConnected(n int, connections [][]int) int {
@@ -45,7 +39,13 @@ func makeConnected(n int, connections [][]int) int {
 	}
 	au := (&ArrayUnion{}).Init(n)
 	for _, c := range connections {
-		au.Union(c[0], c[1])
+		au.Merge(c[0], c[1])
 	}
-	return au.CountRoot() - 1
+	o := 0
+	for i := 0; i < n; i++ {
+		if r := au.Get(i); r == -1 || r == i {
+			o++
+		}
+	}
+	return o - 1
 }

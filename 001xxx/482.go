@@ -1,5 +1,3 @@
-import "math"
-
 func min(a, b int) int {
 	if a <= b {
 		return a
@@ -15,27 +13,29 @@ func max(a, b int) int {
 }
 
 func minDays(bloomDay []int, m int, k int) int {
-	n := len(bloomDay)
-	if m*k > n {
+	if m*k > len(bloomDay) {
 		return -1
 	}
-	l, r := math.MaxInt64, math.MinInt64
-	for _, d := range bloomDay {
-		l, r = min(l, d), max(r, d)
+	var l, r int = 1e9, 0
+	for _, v := range bloomDay {
+		l, r = min(v, l), max(v, r)
 	}
-	r++
-	for l < r {
-		mi := l + (r-l)>>1
-		d := 0
-		for i, j := 0, 0; i <= n; i++ {
-			if i == n || bloomDay[i] > mi {
-				j, d = i+1, d+(i-j)/k
+	for l != r {
+		c, n, d := 0, 0, l+(r-l)>>1
+		for _, v := range bloomDay {
+			if v <= d {
+				c++
+			} else {
+				c = 0
+			}
+			if c == k {
+				c, n = 0, n+1
 			}
 		}
-		if d >= m {
-			r = mi
+		if n >= m {
+			r = d
 		} else {
-			l = mi + 1
+			l = d + 1
 		}
 	}
 	return l
