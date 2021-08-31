@@ -63,7 +63,7 @@ func less(a, b int) bool { return a < b }
 func eq(a, b int) bool   { return a == b }
 func medianSlidingWindow(nums []int, k int) []float64 {
 	l := len(nums)
-	o, i := make([]float64, l-k+1), 1
+	o := make([]float64, l-k+1)
 	ar := make([]int, k)
 	copy(ar, nums[:k])
 	oa := (&OrderedArray{}).Init(ar, less, eq)
@@ -75,9 +75,8 @@ func medianSlidingWindow(nums []int, k int) []float64 {
 	}
 
 	o[0] = median()
-	for j := k; j < l; i, j = i+1, j+1 {
+	for i, j := 1, k; j < l; i, j = i+1, j+1 {
 		_, idx := oa.Exist(nums[j-k])
-		println(nums[j-k], nums[j], idx, i)
 		oa.RemoveAt(idx)
 		oa.Add(nums[j])
 		o[i] = median()

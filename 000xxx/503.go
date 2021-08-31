@@ -1,16 +1,24 @@
 func nextGreaterElements(nums []int) []int {
 	l := len(nums)
-	out := make([]int, l)
+	o := make([]int, l)
 	for i := 0; i < l; i++ {
-		out[i] = -1
+		o[i] = -1
 	}
-	for i := 0; i < l; i++ {
-		for j := i + 1; j < i+l; j++ {
-			if nums[j%l] > nums[i] {
-				out[i] = nums[j%l]
+	s := make([]int, 0, 16)
+	for i := 0; i < l<<1; i++ {
+		n := nums[i%l]
+		for len(s) > 0 {
+			j := len(s) - 1
+			m := s[j]
+			if n <= nums[m] {
 				break
 			}
+			o[m] = n
+			s = s[:j]
+		}
+		if i < l {
+			s = append(s, i)
 		}
 	}
-	return out
+	return o
 }

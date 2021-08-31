@@ -13,7 +13,6 @@ func checkIfExist(arr []int) bool {
 	}
 	for _, a := range arr {
 		if m[a<<1] || (a&1 == 0 && m[a>>1]) {
-			println(a)
 			return true
 		}
 	}
